@@ -32,7 +32,7 @@ public class EnemyEye : MonoBehaviour
         movement.x = Input.GetAxis("Horizontal");
         movement.y = Input.GetAxis("Vertical");
 
-        if (Input.GetMouseButtonDown(0))    // some other conditional for attacking
+        if (Input.GetKeyDown(KeyCode.R))    // some other conditional for attacking
         {
             StartAttack();
         }
