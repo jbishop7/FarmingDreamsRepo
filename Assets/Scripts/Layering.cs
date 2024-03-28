@@ -20,7 +20,7 @@ public class Layering : MonoBehaviour
     {
         if (player.transform.position.y > transform.position.y)
         {
-            spriteRenderer.sortingOrder = 2;
+            spriteRenderer.sortingOrder = 3;
         }
         else
         {
