@@ -1540,12 +1540,12 @@ MonoBehaviour:
   walkableTile: {fileID: 11400000, guid: bc36a558ecd1f67429fa48604d4bcca2, type: 2}
   boundaryTile: {fileID: 11400000, guid: 926b88a2ab63e1641888e4c99d3fc9bf, type: 2}
   player: {fileID: 1888513300}
-  mapWidth: 25
-  mapHeight: 25
-  minRoomSize: 1
+  mapWidth: 35
+  mapHeight: 35
+  minRoomSize: 2
   maxRoomSize: 4
-  corridorWidth: 1
-  numberOfRooms: 15
+  corridorWidth: 2
+  numberOfRooms: 10
 --- !u!1 &600616690
 GameObject:
   m_ObjectHideFlags: 0

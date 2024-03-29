@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class DungeonGenerator : MonoBehaviour
+public class MapGenerator : MonoBehaviour
 {
     public Tilemap walkableTilemap;
     public Tilemap boundaryTilemap;
@@ -12,10 +12,10 @@ public class DungeonGenerator : MonoBehaviour
 
     public int mapWidth = 50; 
     public int mapHeight = 50;
-    public int minRoomSize = 3; 
-    public int maxRoomSize = 7;
-    public int corridorWidth = 1;
-    public int numberOfRooms = 20;
+    public int minRoomSize = 2; 
+    public int maxRoomSize = 4;
+    public int corridorWidth = 2;
+    public int numberOfRooms = 10;
 
     private List<Vector3Int> roomCenters;
 
@@ -81,26 +81,53 @@ public class DungeonGenerator : MonoBehaviour
 
     void GenerateCorridors()
     {
+        corridorWidth = 2;
+
         for (int i = 0; i < roomCenters.Count - 1; i++)
         {
             Vector3Int start = roomCenters[i];
             Vector3Int end = roomCenters[i + 1];
 
-            while (start.x != end.x && start.x > -mapWidth / 2 + 1 && start.x < mapWidth / 2 - 1)
+            // Generate corridors horizontally
+            for (int dx = Mathf.Min(start.x, end.x); dx <= Mathf.Max(start.x, end.x); dx++)
             {
-                walkableTilemap.SetTile(start, walkableTile);
-                boundaryTilemap.SetTile(start, null);
-                start.x += start.x < end.x ? 1 : -1;
+                for (int dy = -corridorWidth / 2; dy <= corridorWidth / 2; dy++)
+                {
+                    Vector3Int corridorPosition = new Vector3Int(dx, start.y + dy, 0);
+                    if (IsWithinBounds(corridorPosition))
+                    {
+                        walkableTilemap.SetTile(corridorPosition, walkableTile);
+                        boundaryTilemap.SetTile(corridorPosition, null);
+                    }
+                }
             }
 
-            while (start.y != end.y && start.y > -mapHeight / 2 + 1 && start.y < mapHeight / 2 - 1)
+            // Update the start position to the end of the horizontal corridor
+            start = new Vector3Int(end.x, start.y, 0);
+
+            // Generate corridors vertically
+            for (int dy = Mathf.Min(start.y, end.y); dy <= Mathf.Max(start.y, end.y); dy++)
             {
-                walkableTilemap.SetTile(start, walkableTile);
-                boundaryTilemap.SetTile(start, null);
-                start.y += start.y < end.y ? 1 : -1;
+                for (int dx = -corridorWidth / 2; dx <= corridorWidth / 2; dx++)
+                {
+                    Vector3Int corridorPosition = new Vector3Int(start.x + dx, dy, 0);
+                    if (IsWithinBounds(corridorPosition))
+                    {
+                        walkableTilemap.SetTile(corridorPosition, walkableTile);
+                        boundaryTilemap.SetTile(corridorPosition, null);
+                    }
+                }
             }
         }
     }
+
+    // Helper method to check if a position is within the map bounds
+    bool IsWithinBounds(Vector3Int position)
+    {
+        return position.x > -mapWidth / 2 && position.x < mapWidth / 2 - 1 &&
+               position.y > -mapHeight / 2 && position.y < mapHeight / 2 - 1;
+    }
+
 
     void PositionPlayer(Vector3Int playerSpawn)
     {
