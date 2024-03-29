@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5244269894642052558}
   - component: {fileID: 8912084484196474291}
   m_Layer: 0
-  m_Name: Mazuch Soldier
+  m_Name: MazuchSoldier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
