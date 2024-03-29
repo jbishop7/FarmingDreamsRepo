@@ -24,6 +24,7 @@ public class DungeonGenerator : MonoBehaviour
         GenerateDungeon();
     }
 
+
     void GenerateDungeon()
     {
         walkableTilemap.ClearAllTiles();
@@ -32,17 +33,19 @@ public class DungeonGenerator : MonoBehaviour
         FillMapWithBoundaryTiles();
 
         roomCenters = new List<Vector3Int>();
+
         for (int i = 0; i < numberOfRooms; i++)
         {
             int roomWidth = Random.Range(minRoomSize, maxRoomSize);
             int roomHeight = Random.Range(minRoomSize, maxRoomSize);
-            int roomX = Random.Range(0, mapWidth - roomWidth);
-            int roomY = Random.Range(0, mapHeight - roomHeight);
+            int roomX = Random.Range(1, mapWidth - roomWidth - 1);
+            int roomY = Random.Range(1, mapHeight - roomHeight - 1);
 
             CreateRoom(roomX, roomY, roomWidth, roomHeight);
         }
 
         GenerateCorridors();
+
         if (roomCenters.Count > 0)
         {
             PositionPlayer(roomCenters[0]);
@@ -83,14 +86,14 @@ public class DungeonGenerator : MonoBehaviour
             Vector3Int start = roomCenters[i];
             Vector3Int end = roomCenters[i + 1];
 
-            while (start.x != end.x)
+            while (start.x != end.x && start.x > -mapWidth / 2 + 1 && start.x < mapWidth / 2 - 1)
             {
                 walkableTilemap.SetTile(start, walkableTile);
                 boundaryTilemap.SetTile(start, null);
                 start.x += start.x < end.x ? 1 : -1;
             }
 
-            while (start.y != end.y)
+            while (start.y != end.y && start.y > -mapHeight / 2 + 1 && start.y < mapHeight / 2 - 1)
             {
                 walkableTilemap.SetTile(start, walkableTile);
                 boundaryTilemap.SetTile(start, null);
