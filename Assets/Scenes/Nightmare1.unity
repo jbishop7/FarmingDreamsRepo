@@ -1538,6 +1538,7 @@ MonoBehaviour:
   walkableTilemap: {fileID: 2047800958}
   boundaryTilemap: {fileID: 980312420}
   walkableTile: {fileID: 11400000, guid: bc36a558ecd1f67429fa48604d4bcca2, type: 2}
+  walkableTileWithGrass: {fileID: 11400000, guid: 4fe7246f6f91fdc408ca9323683f04d6, type: 2}
   boundaryTile: {fileID: 11400000, guid: 926b88a2ab63e1641888e4c99d3fc9bf, type: 2}
   player: {fileID: 1888513300}
   mapWidth: 35
@@ -5947,6 +5948,6 @@ SceneRoots:
   - {fileID: 522237161}
   - {fileID: 317100143}
   - {fileID: 2265418056888268440}
-  - {fileID: 3703300430795738081}
   - {fileID: 5577450377455170545}
+  - {fileID: 3703300430795738081}
   - {fileID: 582483587}
