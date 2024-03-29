@@ -7,7 +7,9 @@ public class MapGenerator : MonoBehaviour
     public Tilemap walkableTilemap;
     public Tilemap boundaryTilemap;
     public Tile walkableTile;
+    public Tile walkableTileWithGrass;
     public Tile boundaryTile;
+    
     public GameObject player;
 
     public int mapWidth = 50; 
@@ -16,6 +18,8 @@ public class MapGenerator : MonoBehaviour
     public int maxRoomSize = 4;
     public int corridorWidth = 2;
     public int numberOfRooms = 10;
+
+    private float grassChance = 0.15f;
 
     private List<Vector3Int> roomCenters;
 
@@ -73,7 +77,8 @@ public class MapGenerator : MonoBehaviour
             for (int j = y; j < y + height; j++)
             {
                 Vector3Int tilePosition = new Vector3Int(i - mapWidth / 2, j - mapHeight / 2, 0);
-                walkableTilemap.SetTile(tilePosition, walkableTile);
+                Tile tileToUse = (Random.value < grassChance) ? walkableTileWithGrass : walkableTile;
+                walkableTilemap.SetTile(tilePosition, tileToUse);
                 boundaryTilemap.SetTile(tilePosition, null);
             }
         }
@@ -81,14 +86,14 @@ public class MapGenerator : MonoBehaviour
 
     void GenerateCorridors()
     {
-        corridorWidth = 2;
+        corridorWidth = 2; // Assuming you want the corridors to be 2 tiles wide
 
         for (int i = 0; i < roomCenters.Count - 1; i++)
         {
             Vector3Int start = roomCenters[i];
             Vector3Int end = roomCenters[i + 1];
 
-            // Generate corridors horizontally
+            // Create horizontal corridors
             for (int dx = Mathf.Min(start.x, end.x); dx <= Mathf.Max(start.x, end.x); dx++)
             {
                 for (int dy = -corridorWidth / 2; dy <= corridorWidth / 2; dy++)
@@ -96,30 +101,30 @@ public class MapGenerator : MonoBehaviour
                     Vector3Int corridorPosition = new Vector3Int(dx, start.y + dy, 0);
                     if (IsWithinBounds(corridorPosition))
                     {
-                        walkableTilemap.SetTile(corridorPosition, walkableTile);
+                        Tile tileToUse = (Random.value < grassChance) ? walkableTileWithGrass : walkableTile;
+                        walkableTilemap.SetTile(corridorPosition, tileToUse);
                         boundaryTilemap.SetTile(corridorPosition, null);
                     }
                 }
             }
 
-            // Update the start position to the end of the horizontal corridor
-            start = new Vector3Int(end.x, start.y, 0);
-
-            // Generate corridors vertically
+            // Create vertical corridors
             for (int dy = Mathf.Min(start.y, end.y); dy <= Mathf.Max(start.y, end.y); dy++)
             {
                 for (int dx = -corridorWidth / 2; dx <= corridorWidth / 2; dx++)
                 {
-                    Vector3Int corridorPosition = new Vector3Int(start.x + dx, dy, 0);
+                    Vector3Int corridorPosition = new Vector3Int(end.x + dx, dy, 0);
                     if (IsWithinBounds(corridorPosition))
                     {
-                        walkableTilemap.SetTile(corridorPosition, walkableTile);
+                        Tile tileToUse = (Random.value < grassChance) ? walkableTileWithGrass : walkableTile;
+                        walkableTilemap.SetTile(corridorPosition, tileToUse);
                         boundaryTilemap.SetTile(corridorPosition, null);
                     }
                 }
             }
         }
     }
+
 
     // Helper method to check if a position is within the map bounds
     bool IsWithinBounds(Vector3Int position)
