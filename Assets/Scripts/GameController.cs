@@ -28,6 +28,9 @@ public class GameController : MonoBehaviour
     public TextMeshProUGUI inventoryText;
     private bool showingInventory = false;
 
+    private string currentScene = "farm"; // otherwise could be "dungeon"
+    private bool playerFellAsleep = false;
+
     private static GameController _instance;
 
     public static GameController Instance
@@ -181,6 +184,17 @@ public class GameController : MonoBehaviour
             Time.timeScale = 1f;
         }
 
+        if (playerFellAsleep)
+        {
+            Time.timeScale = 0f;
+            if (Input.GetKeyDown(KeyCode.RightShift))
+            {
+                Debug.Log("HELLO from sleeping");
+                EndDay();
+            }
+
+        }
+
 
     }
 
@@ -289,6 +303,15 @@ public class GameController : MonoBehaviour
 
     public void EndDay()
     {
+        if (playerFellAsleep)
+        {
+            Time.timeScale = 1f;
+            playerFellAsleep = false;
+            Debug.Log("We fell asleep. Now we must fight with nothing good.");
+            SceneManager.LoadScene(1);
+            return;
+        }
+
         if (CheckToolInventory("bamboo_sword"))
         {
             Debug.Log("I want to end the day. And my life.");
@@ -301,6 +324,12 @@ public class GameController : MonoBehaviour
         // now we would travel to the nightmare world
         // Add check that they have a sworda
        
+    }
+
+    public void ForceEndDay()
+    {
+        playerFellAsleep = true;
+        inventoryAdditions.SetText("You fell asleep on the job. You will go into the Nightmare world unprepared. Good luck.\nPress Right Shift to continue.");
     }
 
     private void OnLevelWasLoaded(int level)
