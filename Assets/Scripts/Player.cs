@@ -34,6 +34,8 @@ public class Player : MonoBehaviour
 
     private RepairableStructure currentRepair = null;
 
+    private Merchant merchant = null;
+
     public TextMeshProUGUI playerHints;
 
     private static Player _instance;
@@ -127,6 +129,12 @@ public class Player : MonoBehaviour
             gc.EndDay();
         }
 
+        if (merchant != null && Input.GetKeyDown(KeyCode.E))
+        {
+            merchant.ShowTrades();
+            SetHint("");
+        }
+
         RotateTool();
 
         if (Input.GetMouseButtonDown(0))
@@ -214,6 +222,11 @@ public class Player : MonoBehaviour
             }
         }
 
+        if(collision.gameObject.name == "Merchant")
+        {
+            SetHint("Press E to trade with Merchant Maurice");
+            merchant = collision.gameObject.GetComponent<Merchant>();
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -240,6 +253,12 @@ public class Player : MonoBehaviour
         {
             tent = null;
             SetHint("");
+        }
+
+        if (collision.gameObject.name == "Merchant")
+        {
+            SetHint("");
+            merchant = null;
         }
     }
 

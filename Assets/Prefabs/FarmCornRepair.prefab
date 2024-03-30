@@ -145,5 +145,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   structure: {fileID: 3960754515311508323, guid: 2af2e8d6c1da8c04ebe5cf54eb5b2b11, type: 3}
   itemRequired: wood
-  itemQuantity: 1
-  text: {fileID: 0}
+  itemQuantity: 15
+  doesSpawn: 1

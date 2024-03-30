@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
 
     private Dictionary<string, int> playerInventory = new();
     private Dictionary<string, int> playerTools = new();
+    private int playerGold = 50;
 
     public TextMeshProUGUI inventoryAdditions;
     private readonly float invAdditionTimer = 3f;
@@ -19,6 +20,8 @@ public class GameController : MonoBehaviour
 
     public GameObject journalPanel;
     private bool showingJournal = false;
+
+    private TextMeshProUGUI moneyText;
 
     public GameObject craftingPanel;
     private bool showingCrafting = false;
@@ -30,6 +33,28 @@ public class GameController : MonoBehaviour
 
     private string currentScene = "farm"; // otherwise could be "dungeon"
     private bool playerFellAsleep = false;
+
+    private List<GameObject> structures = new();
+    public GameObject treePrefab;
+
+    public GameObject bambooRepairPrefab;
+    public GameObject bambooFarmPrefab;
+
+    public GameObject potatoRepairPrefab;
+    public GameObject potatoFarmPrefab;
+
+    public GameObject cornRepairPrefab;
+    public GameObject cornFarmPrefab;
+
+    public GameObject berryRepairPrefab;
+    public GameObject berryFarmPrefab;
+
+    public GameObject craftingRepairPrefab;
+    public GameObject craftingBenchPrefab;
+
+    public GameObject restrictedPrefab;
+    
+    
 
     private static GameController _instance;
 
@@ -58,6 +83,7 @@ public class GameController : MonoBehaviour
         }
 
         playerTools.Add("axe", 1);
+        CreateInitialStructures();
 
     }
     void Start()
@@ -72,126 +98,143 @@ public class GameController : MonoBehaviour
 
     public void InitializeGameController()
     {
-        inventoryPanel = null;
-        journalPanel = null;
-        craftingPanel = null;
+        if (currentScene == "farm")
+        {
+            inventoryPanel = null;
+            journalPanel = null;
+            craftingPanel = null;
+
+            TextMeshProUGUI[] texts = FindObjectsOfType<TextMeshProUGUI>();
+            Panel[] panels = FindObjectsOfType<Panel>(true);
+
+
+            foreach (TextMeshProUGUI ui in texts)
+            {
+                switch (ui.name)
+                {
+                    case "ToolsText":
+                        toolsText = ui; break;
+                    case "InventoryText":
+                        inventoryText = ui; break;
+                    case "InventoryAdditions":
+                        inventoryAdditions = ui; break;
+                    case "MoneyText":
+                        moneyText = ui; break;
+
+                }
+                Debug.Log(ui.name);
+            }
+
+            foreach (Panel go in panels)
+            {
+                Debug.Log(go.gameObject.name);
+                switch (go.gameObject.name)
+                {
+                    case "Journal":
+                        journalPanel = go.gameObject; break;
+                    case "InventoryPanel":
+                        inventoryPanel = go.gameObject; break;
+                    case "CraftingPanel":
+                        craftingPanel = go.gameObject; break;
+                }
+            }
+
+            inventoryAdditions.SetText("");
+            inventoryPanel.SetActive(false);
+            craftingPanel.SetActive(false);
+            journalPanel.SetActive(false);
+            moneyText.SetText($"{playerGold}");
+        }
+        else
+        {
+            Debug.Log("We are NOT on the farm.");
+        }
         
-        TextMeshProUGUI[] texts = FindObjectsOfType<TextMeshProUGUI>();
-        Panel[] panels = FindObjectsOfType<Panel>();
-
-
-        foreach(TextMeshProUGUI ui in texts)
-        {
-            switch (ui.name)
-            {
-                case "ToolsText":
-                    toolsText = ui; break;
-                case "InventoryText":
-                    inventoryText = ui; break;
-                case "InventoryAdditions":
-                    inventoryAdditions = ui;  break;
-                
-            }
-            Debug.Log(ui.name);
-        }
-
-        foreach(Panel go in panels)
-        {
-            Debug.Log(go.gameObject.name);
-            switch (go.gameObject.name)
-            {
-                case "Journal":
-                    journalPanel = go.gameObject; break;
-                case "InventoryPanel":
-                    inventoryPanel = go.gameObject; break;
-                case "CraftingPanel":
-                    craftingPanel = go.gameObject; break;
-            }
-        }
-
-        inventoryAdditions.SetText("");
-        inventoryPanel.SetActive(false);
-        craftingPanel.SetActive(false);
-        journalPanel.SetActive(false);
         // might do something different tbh, make each component talk to the GC and add itself...
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (startTimer)
+        if(currentScene == "farm")
         {
-            timer -= Time.deltaTime;
-        
-            if (timer < 0)
+            if (startTimer)
             {
-                inventoryAdditions.SetText("");
-                startTimer = false;
-                timer = invAdditionTimer;
+                timer -= Time.deltaTime;
+
+                if (timer < 0)
+                {
+                    inventoryAdditions.SetText("");
+                    startTimer = false;
+                    timer = invAdditionTimer;
+                }
             }
-        }
 
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            showingJournal = !showingJournal;
-        }
+            if (Input.GetKeyDown(KeyCode.J))
+            {
+                showingJournal = !showingJournal;
+            }
 
-        if (showingJournal)
-        {
-            journalPanel.SetActive(true);
-            Time.timeScale = 0f;
+            if (showingJournal)
+            {
+                journalPanel.SetActive(true);
+                Time.timeScale = 0f;
+            }
+            else
+            {
+                journalPanel.SetActive(false);
+                Time.timeScale = 1f;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (showingCrafting || showingInventory)
+                {
+                    showingInventory = false;
+                    showingCrafting = false;
+                    showingJournal = false;
+                }
+            }
+
+            if (showingCrafting)
+            {
+                Time.timeScale = 0f;
+                craftingPanel.SetActive(true);
+            }
+            else
+            {
+                craftingPanel.SetActive(false);
+                Time.timeScale = 1f;
+            }
+
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                showingInventory = !showingInventory;
+            }
+
+            if (showingInventory)
+            {
+                Time.timeScale = 0f;
+                ShowInventory();
+            }
+            else
+            {
+                inventoryPanel.SetActive(false);
+                Time.timeScale = 1f;
+            }
+
+            if (playerFellAsleep)
+            {
+                Time.timeScale = 0f;
+                if (Input.GetKeyDown(KeyCode.RightShift))
+                {
+                    EndDay();
+                }
+
+            }
         }
         else
         {
-            journalPanel.SetActive(false);
-            Time.timeScale = 1f;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (showingCrafting || showingInventory)
-            {
-                showingInventory = false;
-                showingCrafting = false;
-                showingJournal = false;
-            }
-        }
-        
-        if (showingCrafting)
-        {
-            Time.timeScale = 0f;
-            craftingPanel.SetActive(true);
-        }
-        else
-        {
-            craftingPanel.SetActive(false);
-            Time.timeScale = 1f;
-        }
-
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            showingInventory = !showingInventory;
-        }
-
-        if (showingInventory)
-        {
-            Time.timeScale = 0f;
-            ShowInventory();
-        }
-        else
-        {
-            inventoryPanel.SetActive(false);
-            Time.timeScale = 1f;
-        }
-
-        if (playerFellAsleep)
-        {
-            Time.timeScale = 0f;
-            if (Input.GetKeyDown(KeyCode.RightShift))
-            {
-                Debug.Log("HELLO from sleeping");
-                EndDay();
-            }
 
         }
 
@@ -264,6 +307,43 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public int GetInventoryItemCount(string item)
+    {
+        if (playerInventory.ContainsKey(item))
+        {
+            return playerInventory[item];
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
+    public void SellItem(string item, int price)
+    {
+        // so we are just going to sell 1 of this item every time we click it
+        if (playerInventory.ContainsKey(item))
+        {
+            if (playerInventory[item] > 0)
+            {
+                playerInventory[item]--;
+                playerGold += price;
+            }
+        }
+        moneyText.SetText($"{playerGold}");
+    }
+
+    public int BuyItem(string item, int price)
+    {
+        if (playerGold >= price)
+        {
+            AddToInventory(item, 1);
+            playerGold -= price;
+        }
+        moneyText.SetText($"{playerGold}");
+        return playerGold;
+        
+    }
     public bool CheckToolInventory(string tool)
     {
         if (playerTools.ContainsKey(tool))
@@ -334,19 +414,100 @@ public class GameController : MonoBehaviour
 
     private void OnLevelWasLoaded(int level)
     {
-        if (level > 1)
+        if (level == 1)
         {
-            return;
+            currentScene = "dungeon";
+        }
+        else
+        {
+            currentScene = "farm";
         }
         InitializeGameController();
     }
 
     public void EndDemo()
     {
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(0);
     }
 
-    
+    private void SpawnStructures()
+    {
+
+    }
+
+    private void SaveStructures()
+    {
+
+    }
+
+    private void CreateInitialStructures()
+    {
+        Vector3[] positions =
+        {
+            new Vector3(-3.82f, -2.76f, 0f),    // trees
+            new Vector3(-5.4f, -11.65f, 0f),
+            new Vector3(12.64f, -10.36f, 0f),
+            new Vector3(26.53f, -4.15f, 0f),
+            new Vector3(12.79f, 3.97f, 0f),
+            new Vector3(0.26f, -4.31f, 0f),
+            new Vector3(-5.8f, -4.24f, 0f),
+            new Vector3(2.87f, -4.34f, 0f),
+            new Vector3(-2.11f, 4.72f, 0f), // workbench
+            new Vector3(-3.91f, -7.05f, 0f),   // restricteds
+            new Vector3(13.1f, -5.76f, 0f),
+            new Vector3(15.02f, 9.3f, 0f),
+            new Vector3(23.23f, -2.07f, 0f),
+            new Vector3(6.24f, -0.29f, 0f),  // this one is rotated -41.16 deg on the Z
+            new Vector3(1.38f, 3.02f, 0f),  // bamboo farms now
+            new Vector3(1.38f, 4.64f, 0f),
+            new Vector3(22.44f, -6.73f, 0f),  // potato farms
+            new Vector3(27.57f, -6.73f, 0f),
+            new Vector3(-0.52f, -10.76f, 0f),  // corn farms
+            new Vector3(8.44f, -9.81f, 0f),
+            new Vector3(21.45f, 12.45f, 0f),  // berry farms
+            new Vector3(21.45f, 10.88f, 0f),
+            new Vector3(0, 0, 0f),
+
+        };
+
+        // do the trees first
+        for (int i = 0; i < 8; i++)
+        {
+            Instantiate(treePrefab, positions[i], treePrefab.transform.rotation);
+        }
+        // workbench
+        Instantiate(craftingRepairPrefab, positions[8], craftingRepairPrefab.transform.rotation);
+        // then restricteds
+        for (int i = 9; i < 13; i++)
+        {
+            Instantiate(restrictedPrefab, positions[i], restrictedPrefab.transform.rotation);
+        }
+        GameObject rR = Instantiate(restrictedPrefab, positions[13], restrictedPrefab.transform.rotation);
+        Rigidbody2D rRB = rR.GetComponent<Rigidbody2D>();
+        rRB.rotation = -41.16f;
+        // then bamboo farms
+        Instantiate(bambooRepairPrefab, positions[14], bambooRepairPrefab.transform.rotation);
+        GameObject t2BbFarm = Instantiate(bambooRepairPrefab, positions[15], bambooRepairPrefab.transform.rotation);
+        RepairableStructure rsBbFarm = t2BbFarm.GetComponent<RepairableStructure>();
+        rsBbFarm.itemQuantity = 40;
+
+        // then potato farms
+        Instantiate(potatoRepairPrefab, positions[16], potatoRepairPrefab.transform.rotation);
+        GameObject t2PtFarm = Instantiate(potatoRepairPrefab, positions[17], potatoRepairPrefab.transform.rotation);
+        RepairableStructure rsPtFarm = t2PtFarm.GetComponent<RepairableStructure>();
+        rsPtFarm.itemQuantity = 40;
+
+        // then corn farms
+        Instantiate(cornRepairPrefab, positions[18], cornRepairPrefab.transform.rotation);
+        GameObject t2CnFarm = Instantiate(cornRepairPrefab, positions[19], cornRepairPrefab.transform.rotation);
+        RepairableStructure rsCnFarm = t2CnFarm.GetComponent<RepairableStructure>();
+        rsCnFarm.itemQuantity = 40;
+        // then berry farms
+        Instantiate(berryRepairPrefab, positions[20], berryRepairPrefab.transform.rotation);
+        GameObject t2Bfarm = Instantiate(berryRepairPrefab, positions[21], berryRepairPrefab.transform.rotation);
+        RepairableStructure rsBFarm = t2Bfarm.GetComponent<RepairableStructure>();
+        rsBFarm.itemQuantity = 40;
+    }
 
 
 
