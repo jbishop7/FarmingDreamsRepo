@@ -101,8 +101,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   structure: {fileID: 0}
-  itemRequired: bamboo
-  itemQuantity: 1
+  itemsRequired:
+  - wood
+  itemQuantities: 0f000000
   doesSpawn: 0
 --- !u!114 &8519588216518712579
 MonoBehaviour:

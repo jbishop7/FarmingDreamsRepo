@@ -55,8 +55,8 @@ public class GameController : MonoBehaviour
     public GameObject craftingBenchPrefab;
 
     public GameObject restrictedPrefab;
-    
-    
+
+    private int dayCounter = 0;
 
     private static GameController _instance;
 
@@ -85,6 +85,7 @@ public class GameController : MonoBehaviour
             CreateInitialStructures();
             playerTools.Add("axe", 1);
             playerInventory.Add("wood", 2000);
+            playerInventory.Add("bamboo", 100);
         }
 
         
@@ -105,6 +106,7 @@ public class GameController : MonoBehaviour
     {
         if (currentScene == "farm")
         {
+            dayCounter++;
             inventoryPanel = null;
             journalPanel = null;
             craftingPanel = null;
@@ -239,6 +241,7 @@ public class GameController : MonoBehaviour
                 Time.timeScale = 0f;
                 if (Input.GetKeyDown(KeyCode.RightShift))
                 {
+                    Time.timeScale = 1f;
                     EndDay();
                 }
 
@@ -287,6 +290,28 @@ public class GameController : MonoBehaviour
         InventoryAddition($"{quantity} {item}");
     }
 
+    public void AddToInventory(string[] items, int[] quantity)
+    {
+        string invAdditions = "";
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (playerInventory.ContainsKey(items[i]))
+            {
+                playerInventory[items[i]] += quantity[i];
+            }
+            else
+            {
+                playerInventory.Add(items[i], quantity[i]);
+            }
+            invAdditions += $"{quantity[i]} {items[i]},";
+        }
+
+        invAdditions = invAdditions.Remove(invAdditions.Length - 1);
+
+
+        InventoryAddition(invAdditions);
+    }
+
     private void InventoryAddition(string addition)
     {
         startTimer = true;
@@ -316,6 +341,29 @@ public class GameController : MonoBehaviour
         {
             return false;
         }
+    }
+
+    public bool UseInventoryItems(string[] items, int[] quantities)
+    {
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (!playerInventory.ContainsKey(items[i]))
+            {
+                return false;
+            }
+
+            if (playerInventory[items[i]] >= quantities[i])
+            {
+                // then we can use these items
+                playerInventory[items[i]] -= quantities[i];
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return true;
+        
     }
 
     public int GetInventoryItemCount(string item)
@@ -399,14 +447,14 @@ public class GameController : MonoBehaviour
             Time.timeScale = 1f;
             playerFellAsleep = false;
             Debug.Log("We fell asleep. Now we must fight with nothing good.");
-            SceneManager.LoadScene(1);
             SaveStructures();
+            SceneManager.LoadScene(1);
             return;
         }
 
         if (CheckToolInventory("bamboo_sword"))
         {
-            Debug.Log("I want to end the day. And my life.");
+            Debug.Log("I want to end the day.");
             SaveStructures();
             SceneManager.LoadScene(1);
         }
@@ -427,6 +475,7 @@ public class GameController : MonoBehaviour
 
     private void OnLevelWasLoaded(int level)
     {
+        Time.timeScale = 1f;
         if (level == 1)
         {
             currentScene = "dungeon";
@@ -451,25 +500,69 @@ public class GameController : MonoBehaviour
             switch(structures[i])
             {
                 case "BrokenBamboo":
-                    Instantiate(bambooRepairPrefab, structureLocations[i], bambooRepairPrefab.transform.rotation);
+                    if (structureLocations[i] == new Vector3(1.38f, 4.64f, 0f))
+                    {
+                        RepairableStructure bamRs = Instantiate(bambooRepairPrefab, structureLocations[i], bambooRepairPrefab.transform.rotation).GetComponent<RepairableStructure>();
+                        int[] quantities = { 40, 30 };
+                        bamRs.itemQuantities = quantities;
+                        string[] items = { "wood", "bamboo" };
+                        bamRs.itemsRequired = items;
+                    }
+                    else
+                    {
+                        Instantiate(bambooRepairPrefab, structureLocations[i], bambooRepairPrefab.transform.rotation);
+                    }
                     break;
                 case "BambooFarm":
                     Instantiate(bambooFarmPrefab, structureLocations[i], bambooFarmPrefab.transform.rotation);
                     break;
                 case "BrokenPotato":
-                    Instantiate(potatoRepairPrefab, structureLocations[i], potatoRepairPrefab.transform.rotation);
+                    if (structureLocations[i] == new Vector3(27.57f, -6.73f, 0f))
+                    {
+                        RepairableStructure potRs = Instantiate(potatoRepairPrefab, structureLocations[i], potatoRepairPrefab.transform.rotation).GetComponent<RepairableStructure>();
+                        int[] quantities = { 40, 30 };
+                        potRs.itemQuantities = quantities;
+                        string[] items = { "wood", "bamboo" };
+                        potRs.itemsRequired = items;
+                    }
+                    else
+                    {
+                        Instantiate(potatoRepairPrefab, structureLocations[i], potatoRepairPrefab.transform.rotation);
+                    }
                     break;
                 case "PotatoFarm":
                     Instantiate(potatoFarmPrefab, structureLocations[i], potatoFarmPrefab.transform.rotation);
                     break;
                 case "BrokenBerry":
-                    Instantiate(berryRepairPrefab, structureLocations[i], berryRepairPrefab.transform.rotation);
+                    if (structureLocations[i] == new Vector3(21.45f, 10.88f, 0f))
+                    {
+                        RepairableStructure berryRs = Instantiate(berryRepairPrefab, structureLocations[i], berryRepairPrefab.transform.rotation).GetComponent<RepairableStructure>();
+                        int[] quantities = { 40, 30 };
+                        berryRs.itemQuantities = quantities;
+                        string[] items = { "wood", "bamboo" };
+                        berryRs.itemsRequired = items;
+                    }
+                    else
+                    {
+                        Instantiate(berryRepairPrefab, structureLocations[i], berryRepairPrefab.transform.rotation);
+                    }
                     break;
                 case "BerryFarm":
                     Instantiate(berryFarmPrefab, structureLocations[i], berryFarmPrefab.transform.rotation);
                     break;
                 case "BrokenCorn":
-                    Instantiate(cornRepairPrefab, structureLocations[i], cornRepairPrefab.transform.rotation);  
+                    if (structureLocations[i] == new Vector3(8.44f, -9.81f, 0f))
+                    {
+                        RepairableStructure cornRs = Instantiate(cornRepairPrefab, structureLocations[i], cornRepairPrefab.transform.rotation).GetComponent<RepairableStructure>();
+                        int[] quantities = { 40, 30 };
+                        cornRs.itemQuantities = quantities;
+                        string[] items = { "wood", "bamboo" };
+                        cornRs.itemsRequired = items;
+                    }
+                    else
+                    {
+                        Instantiate(cornRepairPrefab, structureLocations[i], cornRepairPrefab.transform.rotation);
+                    }
                     break;
                 case "CornFarm":
                     Instantiate(cornFarmPrefab, structureLocations[i], cornFarmPrefab.transform.rotation);
@@ -540,7 +633,6 @@ public class GameController : MonoBehaviour
         List<Vector3> positions = new();
         foreach(GameObject go in structs)
         {
-            Debug.Log(go.name);
             if (go.name.Contains("BambooRepair"))
             {
                 // we have a broken bamboo plot
@@ -658,28 +750,33 @@ public class GameController : MonoBehaviour
         rRB.rotation = -41.16f;
         // then bamboo farms
         Instantiate(bambooRepairPrefab, positions[14], bambooRepairPrefab.transform.rotation);
-        GameObject t2BbFarm = Instantiate(bambooRepairPrefab, positions[15], bambooRepairPrefab.transform.rotation);
-        RepairableStructure rsBbFarm = t2BbFarm.GetComponent<RepairableStructure>();
-        rsBbFarm.itemQuantity = 40;
+        RepairableStructure bamRs = Instantiate(bambooRepairPrefab, positions[15], bambooRepairPrefab.transform.rotation).GetComponent<RepairableStructure>();
+        int[] quantities = { 40, 30 };
+        bamRs.itemQuantities = quantities;
+        string[] items = { "wood", "bamboo" };
+        bamRs.itemsRequired = items;
 
         // then potato farms
         Instantiate(potatoRepairPrefab, positions[16], potatoRepairPrefab.transform.rotation);
-        GameObject t2PtFarm = Instantiate(potatoRepairPrefab, positions[17], potatoRepairPrefab.transform.rotation);
-        RepairableStructure rsPtFarm = t2PtFarm.GetComponent<RepairableStructure>();
-        rsPtFarm.itemQuantity = 40;
+        RepairableStructure potRs = Instantiate(potatoRepairPrefab, positions[17], potatoRepairPrefab.transform.rotation).GetComponent<RepairableStructure>();
+        potRs.itemQuantities = quantities;
+        potRs.itemsRequired = items;
 
         // then corn farms
         Instantiate(cornRepairPrefab, positions[18], cornRepairPrefab.transform.rotation);
-        GameObject t2CnFarm = Instantiate(cornRepairPrefab, positions[19], cornRepairPrefab.transform.rotation);
-        RepairableStructure rsCnFarm = t2CnFarm.GetComponent<RepairableStructure>();
-        rsCnFarm.itemQuantity = 40;
+        RepairableStructure cornRs = Instantiate(cornRepairPrefab, positions[19], cornRepairPrefab.transform.rotation).GetComponent<RepairableStructure>();
+        cornRs.itemQuantities = quantities;
+        cornRs.itemsRequired = items;
         // then berry farms
         Instantiate(berryRepairPrefab, positions[20], berryRepairPrefab.transform.rotation);
-        GameObject t2Bfarm = Instantiate(berryRepairPrefab, positions[21], berryRepairPrefab.transform.rotation);
-        RepairableStructure rsBFarm = t2Bfarm.GetComponent<RepairableStructure>();
-        rsBFarm.itemQuantity = 40;
+        RepairableStructure berryRs = Instantiate(berryRepairPrefab, positions[21], berryRepairPrefab.transform.rotation).GetComponent<RepairableStructure>();
+        berryRs.itemQuantities = quantities;
+        berryRs.itemsRequired = items;
     }
 
-
+    public int GetDayCount()
+    {
+        return dayCounter;
+    }
 
 }

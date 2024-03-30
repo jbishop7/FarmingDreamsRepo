@@ -16,6 +16,24 @@ public class TimeController : MonoBehaviour
     public TextMeshProUGUI clockText;
     public TextMeshProUGUI hintText;
 
+    public static TimeController _instance;
+
+    public static TimeController Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError("No time controller");
+            }
+            return _instance;
+        }
+    }
+
+    private void Awake()
+    {
+        _instance = this;
+    }
 
     void Start()
     {
@@ -55,8 +73,13 @@ public class TimeController : MonoBehaviour
         clockText.SetText($"{hour%24}:{Mathf.Floor(mins)}0");
     }
 
-    private void FixedUpdate()
+    public float GetHour()
     {
+        return hour;
+    }
 
+    public float GetMins()
+    {
+        return mins;
     }
 }

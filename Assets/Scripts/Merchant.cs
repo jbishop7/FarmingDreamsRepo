@@ -44,12 +44,16 @@ public class Merchant : MonoBehaviour
     void Start()
     {
         tradePanel.SetActive(false);
-        buying.Add("wood", 2);
-        buying.Add("bamboo", 1);
-        selling.Add("wood", 4);
-        selling.Add("axe_upgrade", 100);
-        selling.Add("berry_aid", 40);
-        selling.Add("ingot", 60);
+        buying.Add("wood", 4);
+        buying.Add("bamboo", 2);
+        buying.Add("corn", 1);
+        buying.Add("potato", 5);
+        buying.Add("blackberry", 6);
+
+        selling.Add("wood", 8);
+        selling.Add("axe_upgrade", 200);
+        selling.Add("berry_aid", 80);
+        selling.Add("ingot", 120);
 
         sellDropdown.onValueChanged.AddListener(delegate
         {

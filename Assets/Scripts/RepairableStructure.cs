@@ -6,8 +6,8 @@ using UnityEngine;
 public class RepairableStructure : MonoBehaviour
 {
     public GameObject structure;
-    public string itemRequired;
-    public int itemQuantity;
+    public string[] itemsRequired;
+    public int[] itemQuantities;
     public bool doesSpawn = true;
 
     private float textDuration = 3f;
@@ -49,8 +49,14 @@ public class RepairableStructure : MonoBehaviour
     public void Repair()
     {
         GameController gc = GameController.Instance;
+        if (gameObject.name.Contains("restricted") && gc.GetDayCount() < 2)
+        {
+            textDisplayed = true;
+            text.SetText("It's too early to repair this.");
+            return;
+        }
 
-        if (!gc.UseInventoryItems(itemRequired, itemQuantity))
+        if (!gc.UseInventoryItems(itemsRequired, itemQuantities))
         {
             textDisplayed = true;
             text.SetText("Not enough resources for repair.");
@@ -72,6 +78,12 @@ public class RepairableStructure : MonoBehaviour
 
     public string GetRequiredMaterials()
     {
-        return $"{itemQuantity} {itemRequired}";
+        string materials = "";
+        for (int i = 0; i < itemsRequired.Length; i++)
+        {
+            materials += $"{itemQuantities[i]} {itemsRequired[i]},";
+        }
+        materials = materials.Remove(materials.Length - 1);
+        return materials;
     }
 }
