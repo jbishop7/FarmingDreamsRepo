@@ -7613,12 +7613,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ae1b62291c82d458dde4800b8bc078, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventoryAdditions: {fileID: 1439062701}
-  journalPanel: {fileID: 747890047}
-  craftingPanel: {fileID: 1261974701}
-  inventoryPanel: {fileID: 788579438}
-  toolsText: {fileID: 1757401689}
-  inventoryText: {fileID: 548048225}
   treePrefab: {fileID: 234624669201165773, guid: 512a831e64a0eee48b05907fefdfb231, type: 3}
   bambooRepairPrefab: {fileID: 2055683264489924707, guid: c52d44c03091e5e45b3d6226e4ae27ea, type: 3}
   bambooFarmPrefab: {fileID: 3960754515311508323, guid: 21477dfc265e19249816ff8110636ff7, type: 3}
