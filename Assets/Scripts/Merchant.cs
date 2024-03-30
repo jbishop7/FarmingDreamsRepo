@@ -49,6 +49,7 @@ public class Merchant : MonoBehaviour
         selling.Add("wood", 4);
         selling.Add("axe_upgrade", 100);
         selling.Add("berry_aid", 40);
+        selling.Add("ingot", 60);
 
         sellDropdown.onValueChanged.AddListener(delegate
         {

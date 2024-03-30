@@ -15,6 +15,7 @@ TagManager:
   - Weapon
   - Sword
   - NPC
+  - Tree
   layers:
   - Default
   - TransparentFX

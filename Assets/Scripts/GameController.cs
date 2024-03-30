@@ -13,28 +13,30 @@ public class GameController : MonoBehaviour
     private Dictionary<string, int> playerTools = new();
     private int playerGold = 50;
 
-    public TextMeshProUGUI inventoryAdditions;
+    private TextMeshProUGUI inventoryAdditions;
     private readonly float invAdditionTimer = 3f;
     private float timer = 3f;
     private bool startTimer = false;
 
-    public GameObject journalPanel;
+    private GameObject journalPanel;
     private bool showingJournal = false;
 
     private TextMeshProUGUI moneyText;
 
-    public GameObject craftingPanel;
+    private GameObject craftingPanel;
     private bool showingCrafting = false;
 
-    public GameObject inventoryPanel;
-    public TextMeshProUGUI toolsText;
-    public TextMeshProUGUI inventoryText;
+    private GameObject inventoryPanel;
+    private TextMeshProUGUI toolsText;
+    private TextMeshProUGUI inventoryText;
     private bool showingInventory = false;
 
     private string currentScene = "farm"; // otherwise could be "dungeon"
     private bool playerFellAsleep = false;
 
-    private List<GameObject> structures = new();
+    private List<string> structures = new();
+    private List<Vector3> structureLocations = new();
+
     public GameObject treePrefab;
 
     public GameObject bambooRepairPrefab;
@@ -77,13 +79,16 @@ public class GameController : MonoBehaviour
             Destroy(gameObject);
         }
         else
-        {
+        {   // its the first load!
             _instance = this;
             DontDestroyOnLoad(gameObject); // not doing this yet...
+            CreateInitialStructures();
+            playerTools.Add("axe", 1);
+            playerInventory.Add("wood", 2000);
         }
 
-        playerTools.Add("axe", 1);
-        CreateInitialStructures();
+        
+        
 
     }
     void Start()
@@ -104,7 +109,7 @@ public class GameController : MonoBehaviour
             journalPanel = null;
             craftingPanel = null;
 
-            TextMeshProUGUI[] texts = FindObjectsOfType<TextMeshProUGUI>();
+            TextMeshProUGUI[] texts = FindObjectsOfType<TextMeshProUGUI>(true);
             Panel[] panels = FindObjectsOfType<Panel>(true);
 
 
@@ -158,6 +163,12 @@ public class GameController : MonoBehaviour
     {
         if(currentScene == "farm")
         {
+
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                SaveStructures();
+            }
+
             if (startTimer)
             {
                 timer -= Time.deltaTime;
@@ -389,12 +400,14 @@ public class GameController : MonoBehaviour
             playerFellAsleep = false;
             Debug.Log("We fell asleep. Now we must fight with nothing good.");
             SceneManager.LoadScene(1);
+            SaveStructures();
             return;
         }
 
         if (CheckToolInventory("bamboo_sword"))
         {
             Debug.Log("I want to end the day. And my life.");
+            SaveStructures();
             SceneManager.LoadScene(1);
         }
         else
@@ -421,6 +434,7 @@ public class GameController : MonoBehaviour
         else
         {
             currentScene = "farm";
+            SpawnStructures();
         }
         InitializeGameController();
     }
@@ -432,12 +446,171 @@ public class GameController : MonoBehaviour
 
     private void SpawnStructures()
     {
+        for (int i = 0;  i < structures.Count; i++)
+        {
+            switch(structures[i])
+            {
+                case "BrokenBamboo":
+                    Instantiate(bambooRepairPrefab, structureLocations[i], bambooRepairPrefab.transform.rotation);
+                    break;
+                case "BambooFarm":
+                    Instantiate(bambooFarmPrefab, structureLocations[i], bambooFarmPrefab.transform.rotation);
+                    break;
+                case "BrokenPotato":
+                    Instantiate(potatoRepairPrefab, structureLocations[i], potatoRepairPrefab.transform.rotation);
+                    break;
+                case "PotatoFarm":
+                    Instantiate(potatoFarmPrefab, structureLocations[i], potatoFarmPrefab.transform.rotation);
+                    break;
+                case "BrokenBerry":
+                    Instantiate(berryRepairPrefab, structureLocations[i], berryRepairPrefab.transform.rotation);
+                    break;
+                case "BerryFarm":
+                    Instantiate(berryFarmPrefab, structureLocations[i], berryFarmPrefab.transform.rotation);
+                    break;
+                case "BrokenCorn":
+                    Instantiate(cornRepairPrefab, structureLocations[i], cornRepairPrefab.transform.rotation);  
+                    break;
+                case "CornFarm":
+                    Instantiate(cornFarmPrefab, structureLocations[i], cornFarmPrefab.transform.rotation);
+                    break;
+                case "BrokenBench":
+                    Instantiate(craftingRepairPrefab, structureLocations[i], craftingRepairPrefab.transform.rotation);
+                    break;
+                case "FixedBench":
+                    Instantiate(craftingBenchPrefab, structureLocations[i], craftingBenchPrefab.transform.rotation);
+                    break;
+                case "Restricted":
+                    if (structureLocations[i] == new Vector3(6.24f, -0.29f, 0f))
+                    {
+                        GameObject go = Instantiate(restrictedPrefab, structureLocations[i], restrictedPrefab.transform.rotation);
+                        Rigidbody2D grb = go.GetComponent<Rigidbody2D>();
+                        grb.rotation = -41.16f;
+                    }
+                    else
+                    {
+                        Instantiate(restrictedPrefab, structureLocations[i], restrictedPrefab.transform.rotation);
+                    }
+                    break;
+            }
+        }
+        // and now we respawn the trees
+        Vector3[] treePositions =
+        {
+            new Vector3(-3.82f, -2.76f, 0f),    // trees
+            new Vector3(-5.4f, -11.65f, 0f),
+            new Vector3(12.64f, -10.36f, 0f),
+            new Vector3(26.53f, -4.15f, 0f),
+            new Vector3(12.79f, 3.97f, 0f),
+            new Vector3(0.26f, -4.31f, 0f),
+            new Vector3(-5.8f, -4.24f, 0f),
+            new Vector3(2.87f, -4.34f, 0f),
+        };
+
+        foreach(Vector3 position in treePositions)
+        {
+            Instantiate(treePrefab, position, treePrefab.transform.rotation);
+        }
+
 
     }
 
     private void SaveStructures()
     {
+        GameObject[] repairables = GameObject.FindGameObjectsWithTag("Repairable");
+        GameObject[] farms = GameObject.FindGameObjectsWithTag("Farm");
+        GameObject[] craftables = GameObject.FindGameObjectsWithTag("Craft");
 
+        // now I need to track all the positions of this thing
+        List<GameObject> structs = new();
+        foreach (GameObject go in repairables)
+        {
+            structs.Add(go);
+        }
+        foreach (GameObject go in farms)
+        {
+            structs.Add(go);
+        }
+        foreach (GameObject go in craftables)
+        {
+            structs.Add(go);
+        }
+
+        List<string> structNames = new();
+        List<Vector3> positions = new();
+        foreach(GameObject go in structs)
+        {
+            Debug.Log(go.name);
+            if (go.name.Contains("BambooRepair"))
+            {
+                // we have a broken bamboo plot
+                structNames.Add("BrokenBamboo");
+                positions.Add(go.transform.position);
+            }
+            if (go.name.Contains("PotatoRepair"))
+            {
+                // we have a broken potato plot
+                structNames.Add("BrokenPotato");
+                positions.Add(go.transform.position);
+            }
+            if (go.name.Contains("CornRepair"))
+            {
+                // we have a broken corn plot
+                structNames.Add("BrokenCorn");
+                positions.Add(go.transform.position);
+            }
+            if (go.name.Contains("BerryRepair"))
+            {
+                // we have a broken berry plot
+                structNames.Add("BrokenBerry");
+                positions.Add(go.transform.position);
+            }
+            if (go.name.Contains("BambooPlot"))
+            {
+                // we have found the functional bamboo
+                structNames.Add("BambooFarm");
+                positions.Add(go.transform.position);
+            }
+            if (go.name.Contains("PotatoPlot"))
+            {
+                // we have found the functional potato
+                structNames.Add("PotatoFarm");
+                positions.Add(go.transform.position);
+            }
+            if (go.name.Contains("CornPlot"))
+            {
+                // we have found the functional corn
+                structNames.Add("CornFarm");
+                positions.Add(go.transform.position);
+            }
+            if (go.name.Contains("BerryPlot"))
+            {
+                // we have found the functional berry
+                structNames.Add("BerryFarm");
+                positions.Add(go.transform.position);
+            }
+            if (go.name.Contains("WorkbenchBroken"))
+            {
+                // we have a broken workbench
+                structNames.Add("BrokenBench");
+                positions.Add(go.transform.position);
+            }
+            if (go.name.Contains("WorkbenchFixed"))
+            {
+                // we have a fixed workbench
+                structNames.Add("FixedBench");
+                positions.Add(go.transform.position);
+            }
+            if (go.name.Contains("restricted"))
+            {
+                structNames.Add("Restricted");
+                positions.Add(go.transform.position);
+            }
+        }
+
+        structures = structNames;
+        structureLocations = positions;
+        
     }
 
     private void CreateInitialStructures()
@@ -466,8 +639,6 @@ public class GameController : MonoBehaviour
             new Vector3(8.44f, -9.81f, 0f),
             new Vector3(21.45f, 12.45f, 0f),  // berry farms
             new Vector3(21.45f, 10.88f, 0f),
-            new Vector3(0, 0, 0f),
-
         };
 
         // do the trees first
