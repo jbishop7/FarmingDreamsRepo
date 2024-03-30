@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -21,11 +22,24 @@ public class MapGenerator : MonoBehaviour
 
     private float grassChance = 0.15f;
 
+    public GameObject _RoboGolem;
+    public GameObject _Eyeball;
+    public int minSpawnDistanceFromPlayer = 10;
+
     private List<Vector3Int> roomCenters;
+    private List<Vector3Int> occupiedSpawnLocations = new List<Vector3Int>();
+    private List<Vector3> enemySpawnPoints = new List<Vector3>();
+
+    private void Awake()
+    {
+        
+    }
 
     void Start()
     {
         GenerateDungeon();
+        SpawnEnemy(_Eyeball, 1);
+        SpawnEnemy(_RoboGolem, 2);
     }
 
 
@@ -86,14 +100,13 @@ public class MapGenerator : MonoBehaviour
 
     void GenerateCorridors()
     {
-        corridorWidth = 2; // Assuming you want the corridors to be 2 tiles wide
+        corridorWidth = 2;
 
         for (int i = 0; i < roomCenters.Count - 1; i++)
         {
             Vector3Int start = roomCenters[i];
             Vector3Int end = roomCenters[i + 1];
 
-            // Create horizontal corridors
             for (int dx = Mathf.Min(start.x, end.x); dx <= Mathf.Max(start.x, end.x); dx++)
             {
                 for (int dy = -corridorWidth / 2; dy <= corridorWidth / 2; dy++)
@@ -108,7 +121,6 @@ public class MapGenerator : MonoBehaviour
                 }
             }
 
-            // Create vertical corridors
             for (int dy = Mathf.Min(start.y, end.y); dy <= Mathf.Max(start.y, end.y); dy++)
             {
                 for (int dx = -corridorWidth / 2; dx <= corridorWidth / 2; dx++)
@@ -126,7 +138,6 @@ public class MapGenerator : MonoBehaviour
     }
 
 
-    // Helper method to check if a position is within the map bounds
     bool IsWithinBounds(Vector3Int position)
     {
         return position.x > -mapWidth / 2 && position.x < mapWidth / 2 - 1 &&
@@ -138,6 +149,58 @@ public class MapGenerator : MonoBehaviour
     {
         player.transform.position = walkableTilemap.CellToWorld(playerSpawn);
     }
+
+    void SpawnEnemy(GameObject enemyPrefab, int numberOfEnemies)
+    {
+        int spawnAttempts = 0;
+        int spawnCount = 0;
+
+        float minimumDistanceApart = 10f;
+
+        while (spawnCount < numberOfEnemies && spawnAttempts < numberOfEnemies * 10)
+        {
+            Vector3Int spawnLocation = GetSpawnLocationAwayFromPlayer();
+            Vector3 worldLocation = walkableTilemap.CellToWorld(spawnLocation);
+
+            // Check distance from existing spawn points
+            bool tooClose = enemySpawnPoints.Any(point => Vector3.Distance(point, worldLocation) < minimumDistanceApart);
+
+            if (!tooClose)
+            {
+                Instantiate(enemyPrefab, worldLocation, Quaternion.identity);
+                enemySpawnPoints.Add(worldLocation);
+                spawnCount++;
+            }
+
+            spawnAttempts++;
+        }
+
+        if (spawnAttempts == numberOfEnemies * 10)
+        {
+            Debug.LogWarning("Could not find enough valid spawn points for enemies.");
+        }
+    }
+
+
+    Vector3Int GetSpawnLocationAwayFromPlayer()
+    {
+        const int maxAttempts = 100;
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            int x = Random.Range(1, mapWidth - 1);
+            int y = Random.Range(1, mapHeight - 1);
+            Vector3Int tilePosition = new Vector3Int(x - mapWidth / 2, y - mapHeight / 2, 0);
+
+            if (walkableTilemap.HasTile(tilePosition) &&
+                Vector3.Distance(walkableTilemap.CellToWorld(tilePosition), player.transform.position) > minSpawnDistanceFromPlayer &&
+                !occupiedSpawnLocations.Contains(tilePosition))
+            {
+                return tilePosition;
+            }
+        }
+        return new Vector3Int(0, 0, 0);
+    }
+
 }
 
 
