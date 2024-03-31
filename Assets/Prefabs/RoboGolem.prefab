@@ -13,8 +13,9 @@ GameObject:
   - component: {fileID: 4062963122602535686}
   - component: {fileID: 9006326966577569545}
   - component: {fileID: 4140302431832012627}
+  - component: {fileID: -6844215027362867340}
   m_Layer: 0
-  m_Name: Robo Golem
+  m_Name: RoboGolem
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -142,7 +143,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5536789930514786862}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 676020375afe62049ae782de68611b20, type: 3}
   m_Name: 
@@ -153,3 +154,18 @@ MonoBehaviour:
   maxHealth: 15
   attackDamage: 1
   range: 1.75
+--- !u!114 &-6844215027362867340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5536789930514786862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 376c0b324d0dabf4a9a23f994adcbc79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTransform: {fileID: 0}
+  walkableTilemap: {fileID: 0}
+  moveSpeed: 3
