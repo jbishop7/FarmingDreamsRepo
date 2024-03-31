@@ -34,6 +34,8 @@ public class Player : MonoBehaviour
 
     private RepairableStructure currentRepair = null;
 
+    private Merchant merchant = null;
+
     public TextMeshProUGUI playerHints;
 
     private static Player _instance;
@@ -70,7 +72,6 @@ public class Player : MonoBehaviour
             {
                 tool2 = item;
             }
-            Debug.Log(item.gameObject.name);
         }
 
         tool2.gameObject.SetActive(false);
@@ -115,8 +116,8 @@ public class Player : MonoBehaviour
 
         if (craftingBench != null && Input.GetKeyDown(KeyCode.E))
         {
-            GameController gc = GameController.Instance;
-            gc.ShowCrafting();
+            Crafting c = Crafting.Instance;
+            c.ShowCrafting();
             SetHint("");
         }
 
@@ -125,6 +126,12 @@ public class Player : MonoBehaviour
             SetHint("");
             GameController gc = GameController.Instance;
             gc.EndDay();
+        }
+
+        if (merchant != null && Input.GetKeyDown(KeyCode.E))
+        {
+            merchant.ShowTrades();
+            SetHint("");
         }
 
         RotateTool();
@@ -214,6 +221,11 @@ public class Player : MonoBehaviour
             }
         }
 
+        if(collision.gameObject.name == "Merchant")
+        {
+            SetHint("Press E to trade with Merchant Maurice");
+            merchant = collision.gameObject.GetComponent<Merchant>();
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -240,6 +252,12 @@ public class Player : MonoBehaviour
         {
             tent = null;
             SetHint("");
+        }
+
+        if (collision.gameObject.name == "Merchant")
+        {
+            SetHint("");
+            merchant = null;
         }
     }
 
