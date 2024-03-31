@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Preparation : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private GameController gc;
+    public TMP_Dropdown tool1Dropdown;
+    public TMP_Dropdown tool2Dropdown;
+
     void Start()
     {
         
