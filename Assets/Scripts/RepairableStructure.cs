@@ -6,17 +6,28 @@ using UnityEngine;
 public class RepairableStructure : MonoBehaviour
 {
     public GameObject structure;
-    public string itemRequired;
-    public int itemQuantity;
+    public string[] itemsRequired;
+    public int[] itemQuantities;
+    public bool doesSpawn = true;
 
     private float textDuration = 3f;
     private float timer = 3f;
     private bool textDisplayed = false;
 
-    public TextMeshProUGUI text;
+    private TextMeshProUGUI text;
     void Start()
     {
-        
+        TextMeshProUGUI[] texts = FindObjectsOfType<TextMeshProUGUI>();
+
+        foreach(TextMeshProUGUI ui in texts)
+        {
+            switch (ui.name)
+            {
+                case "InventoryAdditions":
+                    text = ui;
+                    break;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -38,8 +49,14 @@ public class RepairableStructure : MonoBehaviour
     public void Repair()
     {
         GameController gc = GameController.Instance;
+        if (gameObject.name.Contains("restricted") && gc.GetDayCount() < 2)
+        {
+            textDisplayed = true;
+            text.SetText("It's too early to repair this.");
+            return;
+        }
 
-        if (!gc.UseInventoryItems(itemRequired, itemQuantity))
+        if (!gc.UseInventoryItems(itemsRequired, itemQuantities))
         {
             textDisplayed = true;
             text.SetText("Not enough resources for repair.");
@@ -51,13 +68,22 @@ public class RepairableStructure : MonoBehaviour
         {
             newPos = new Vector2(transform.position.x + 0.25f, transform.position.y - 0.2f);
         }
+        if (doesSpawn)
+        {
+            Instantiate(structure, newPos, this.transform.rotation);
+        }
         
-        Instantiate(structure, newPos, this.transform.rotation);
         Destroy(gameObject);
     }
 
     public string GetRequiredMaterials()
     {
-        return $"{itemQuantity} {itemRequired}";
+        string materials = "";
+        for (int i = 0; i < itemsRequired.Length; i++)
+        {
+            materials += $"{itemQuantities[i]} {itemsRequired[i]},";
+        }
+        materials = materials.Remove(materials.Length - 1);
+        return materials;
     }
 }

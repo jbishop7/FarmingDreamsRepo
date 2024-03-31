@@ -144,3 +144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   structure: {fileID: 3960754515311508323, guid: 21477dfc265e19249816ff8110636ff7, type: 3}
+  itemsRequired:
+  - wood
+  itemQuantities: 05000000
+  doesSpawn: 1

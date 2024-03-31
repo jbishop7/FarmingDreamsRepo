@@ -153,9 +153,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 2481752855972887804}
-  growDuration: 3
-  crop: blackberry
-  quantity: 3
+  growDuration: 25
+  crops:
+  - blackberry
+  - thorn
+  quantities: 0300000002000000
 --- !u!60 &7149813435244255543
 PolygonCollider2D:
   m_ObjectHideFlags: 0

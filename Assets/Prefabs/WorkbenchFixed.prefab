@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 9027054297336306321}
   - component: {fileID: 8182898513863626961}
   m_Layer: 0
-  m_Name: workbench
+  m_Name: WorkbenchFixed
   m_TagString: Craft
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

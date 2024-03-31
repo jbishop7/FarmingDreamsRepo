@@ -10,8 +10,8 @@ public class FarmingPlot : MonoBehaviour
     public float growDuration;
     private bool complete = false;
     private bool planted = false;
-    public string crop;
-    public int quantity;
+    public string[] crops;
+    public int[] quantities;
 
     private bool stage1 = false;
     private bool stage2 = false;
@@ -23,7 +23,13 @@ public class FarmingPlot : MonoBehaviour
     }
     void Start()
     {
-        
+        GameController gc = GameController.Instance;
+        TimeController tc = TimeController.Instance;
+        if (gc.GetDayCount() > 1 && tc.GetHour() < 7 && tc.GetMins() < 1)
+        {
+            planted = true;
+            growTimer = 0;
+        }
     }
 
     // Update is called once per frame
@@ -72,7 +78,8 @@ public class FarmingPlot : MonoBehaviour
         growTimer = growDuration;
         stage3 = false;
         GameController gc = GameController.Instance;
-        gc.AddToInventory(crop, quantity);
+        
+        gc.AddToInventory(crops, quantities);
         animator.SetFloat("GrowStage", 0);
     }
 
