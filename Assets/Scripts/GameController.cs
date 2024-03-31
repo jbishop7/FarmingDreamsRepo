@@ -822,6 +822,11 @@ public class GameController : MonoBehaviour
 
     private void CreateInitialStructures()
     {
+        if (currentScene != "farm")
+        {
+            return;
+        }
+
         Vector3[] positions =
         {
             new Vector3(-3.82f, -2.76f, 0f),    // trees
