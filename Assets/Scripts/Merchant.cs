@@ -53,7 +53,7 @@ public class Merchant : MonoBehaviour
         selling.Add("wood", 8);
         selling.Add("axe_upgrade", 200);
         selling.Add("berry_aid", 80);
-        selling.Add("ingot", 120);
+        selling.Add("ingot", 100);
 
         sellDropdown.onValueChanged.AddListener(delegate
         {
@@ -92,7 +92,6 @@ public class Merchant : MonoBehaviour
 
     public void ShowTrades()
     {
-        Debug.Log("Okay");
         tradePanel.SetActive(true);
         sellDropdown.ClearOptions();
         buyDropdown.ClearOptions();
@@ -119,7 +118,6 @@ public class Merchant : MonoBehaviour
         UpdateBuyOffer(0);
 
         showTradePanel = true;
-        Debug.Log("Should be showing trades now...");
     }
 
     private void UpdateSellOffer(int change)

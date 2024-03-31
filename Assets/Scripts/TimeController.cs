@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class TimeController : MonoBehaviour
 {
-    public float dayLength = 6f;
+    public float dayLength = 6f;    // default is 6
 
     private float currentTime = 0f;
-    private float gameHourInSecs = 20f;
+    private float gameHourInSecs = 20f; // default is 20
 
     private float hour = 6f;    // starting time
     private float mins = 0f;
@@ -67,10 +67,14 @@ public class TimeController : MonoBehaviour
             Debug.Log("You are DONE buddy...");
             GameController gc = GameController.Instance;
             gc.ForceEndDay();
-            Time.timeScale = 0.0f;
+            clockText.SetText("2:00");
+        }
+        else
+        {
+            clockText.SetText($"{hour % 24}:{Mathf.Floor(mins)}0");
         }
 
-        clockText.SetText($"{hour%24}:{Mathf.Floor(mins)}0");
+        
     }
 
     public float GetHour()

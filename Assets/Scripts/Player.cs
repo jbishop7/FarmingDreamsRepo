@@ -72,7 +72,6 @@ public class Player : MonoBehaviour
             {
                 tool2 = item;
             }
-            Debug.Log(item.gameObject.name);
         }
 
         tool2.gameObject.SetActive(false);
@@ -117,8 +116,8 @@ public class Player : MonoBehaviour
 
         if (craftingBench != null && Input.GetKeyDown(KeyCode.E))
         {
-            GameController gc = GameController.Instance;
-            gc.ShowCrafting();
+            Crafting c = Crafting.Instance;
+            c.ShowCrafting();
             SetHint("");
         }
 

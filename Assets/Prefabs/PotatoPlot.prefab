@@ -156,7 +156,7 @@ MonoBehaviour:
   growDuration: 25
   crops:
   - potato
-  - potato flower
+  - potato_flower
   quantities: 0400000002000000
 --- !u!60 &7149813435244255543
 PolygonCollider2D:

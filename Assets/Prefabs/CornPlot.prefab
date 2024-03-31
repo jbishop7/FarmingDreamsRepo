@@ -156,7 +156,7 @@ MonoBehaviour:
   growDuration: 25
   crops:
   - corn
-  - corn husk
+  - corn_husk
   quantities: 1400000002000000
 --- !u!60 &7149813435244255543
 PolygonCollider2D:

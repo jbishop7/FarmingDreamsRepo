@@ -22,6 +22,9 @@ public class GameController : MonoBehaviour
     private bool showingJournal = false;
 
     private TextMeshProUGUI moneyText;
+    private TextMeshProUGUI calendarText;
+    private TextMeshProUGUI journalGoalText;
+    private TextMeshProUGUI journalText;
 
     private GameObject craftingPanel;
     private bool showingCrafting = false;
@@ -73,7 +76,7 @@ public class GameController : MonoBehaviour
     }
 
     private void Awake()
-    {
+    { 
         if (_instance != null)
         {
             Destroy(gameObject);
@@ -86,6 +89,7 @@ public class GameController : MonoBehaviour
             playerTools.Add("axe", 1);
             playerInventory.Add("wood", 2000);
             playerInventory.Add("bamboo", 100);
+            playerInventory.Add("ingot", 1);
         }
 
         
@@ -127,14 +131,20 @@ public class GameController : MonoBehaviour
                         inventoryAdditions = ui; break;
                     case "MoneyText":
                         moneyText = ui; break;
+                    case "CalendarText":
+                        calendarText = ui; break;
+                    case "JournalGoal":
+                        journalGoalText = ui; break;
+                    case "JournalText":
+                        journalText = ui; break;
 
                 }
-                Debug.Log(ui.name);
+                
             }
 
             foreach (Panel go in panels)
             {
-                Debug.Log(go.gameObject.name);
+                
                 switch (go.gameObject.name)
                 {
                     case "Journal":
@@ -150,14 +160,12 @@ public class GameController : MonoBehaviour
             inventoryPanel.SetActive(false);
             craftingPanel.SetActive(false);
             journalPanel.SetActive(false);
-            moneyText.SetText($"{playerGold}");
+            playerFellAsleep = false;
         }
         else
         {
-            Debug.Log("We are NOT on the farm.");
+            // Debug.Log("We are NOT on the farm.");
         }
-        
-        // might do something different tbh, make each component talk to the GC and add itself...
     }
 
     // Update is called once per frame
@@ -165,11 +173,9 @@ public class GameController : MonoBehaviour
     {
         if(currentScene == "farm")
         {
+            calendarText.SetText(dayCounter.ToString());    // I hate that it has come to this but something bad is happening and this is the only fix
+            moneyText.SetText($"{playerGold}");
 
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                SaveStructures();
-            }
 
             if (startTimer)
             {
@@ -190,8 +196,7 @@ public class GameController : MonoBehaviour
 
             if (showingJournal)
             {
-                journalPanel.SetActive(true);
-                Time.timeScale = 0f;
+                ShowJournal();
             }
             else
             {
@@ -209,16 +214,17 @@ public class GameController : MonoBehaviour
                 }
             }
 
-            if (showingCrafting)
+            /*if (showingCrafting)
             {
-                Time.timeScale = 0f;
                 craftingPanel.SetActive(true);
+                Crafting c = Crafting.Instance;
+                c.ShowBuilding();
             }
             else
             {
                 craftingPanel.SetActive(false);
                 Time.timeScale = 1f;
-            }
+            } */
 
             if (Input.GetKeyDown(KeyCode.I))
             {
@@ -227,7 +233,6 @@ public class GameController : MonoBehaviour
 
             if (showingInventory)
             {
-                Time.timeScale = 0f;
                 ShowInventory();
             }
             else
@@ -236,32 +241,74 @@ public class GameController : MonoBehaviour
                 Time.timeScale = 1f;
             }
 
-            if (playerFellAsleep)
+            if (playerFellAsleep == true)
+            {
+                Debug.Log("Hello?");
+                Time.timeScale = 0f;
+            }
+            if (playerFellAsleep && Input.GetKeyDown(KeyCode.RightShift))
+            {
+                EndDay();
+            }
+
+            if (showingInventory || showingJournal || showingCrafting)
             {
                 Time.timeScale = 0f;
-                if (Input.GetKeyDown(KeyCode.RightShift))
-                {
-                    Time.timeScale = 1f;
-                    EndDay();
-                }
-
             }
+
         }
         else
         {
-
+            // dungeon code here
         }
 
 
     }
 
+    public void ShowJournal()
+    {
+        switch (dayCounter)
+        {
+            case 1:
+                journalGoalText.SetText("GOAL: Living off the land");
+                journalText.SetText("Chop Trees\nRepair Bamboo Plantation\nRepair Crafting Station\nPlant Bamboo\nHarvest 15 bamboo\nCreate Bamboo Sword\nSleep in Tent");
+                break;
+            case 2:
+            case 3:
+                journalGoalText.SetText("GOAL: EXPLORE");
+                journalText.SetText("Meet Maurice\nHarvest Materials\nPrepare for the Night!\n");
+                break;
+            case 4:
+            case 5:
+                journalGoalText.SetText("GOAL: IMPROVE");
+                journalText.SetText("Find New Crops\nHarvest Materials\nPrepare for the Night!\n");
+                break;
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+                journalGoalText.SetText("GOAL:UPGRADE");
+                journalText.SetText("Upgrade Tools\nBuild Stronger Weapons\nUpgrade Your Farms");
+                break;
+            case 10:
+                journalGoalText.SetText("GOAL: PREPARE");
+                journalText.SetText("It's time to take back the world of Nightmares. Make sure you are prepared for the final Night.");
+                break;
+        }
+
+        journalPanel.SetActive(true);
+
+    }
     public void ShowInventory()
     {
         string tools = "";
         
         foreach(var (key, val) in playerTools)
         {
-            tools += $"{key} x{val}\n";
+            if (val > 0)
+            {
+                tools += $"{key} x{val}\n";
+            }
         }
         toolsText.SetText(tools);
 
@@ -269,7 +316,10 @@ public class GameController : MonoBehaviour
 
         foreach(var (key, val) in playerInventory)
         {
-            items += $"{key} x{val}\n";
+            if (val > 0)
+            {
+                items += $"{key} x{val}\n";
+            }
         }
         inventoryText.SetText(items);
 
@@ -318,7 +368,7 @@ public class GameController : MonoBehaviour
         inventoryAdditions.SetText($"Added {addition} to your inventory");
     }
 
-    private void GuiHint(string hint)
+    public void GuiHint(string hint)
     {
         startTimer = true;
         inventoryAdditions.SetText($"{hint}");
@@ -366,6 +416,43 @@ public class GameController : MonoBehaviour
         
     }
 
+    public bool UseInventoryToolsAndItems(string[] items, int[] quantities)
+    {
+        Dictionary<string, int> allPlayerInventories = new();
+        foreach(var(key, val) in playerTools)
+        {
+            allPlayerInventories.Add(key, val);
+        }
+        foreach(var(key, val) in playerInventory){
+            allPlayerInventories.Add(key, val);
+        }
+        // check if the items exist in our total inventory
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (!allPlayerInventories.ContainsKey(items[i]))
+            {
+                return false;
+            }
+            if (allPlayerInventories[items[i]] < quantities[i])
+            {
+                return false;
+            }
+        }
+        // if we made it here then we can start removing items from both inventories.
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (playerTools.ContainsKey(items[i]))
+            {
+                playerTools[items[i]] -= quantities[i];
+            }
+            if (playerInventory.ContainsKey(items[i]))
+            {
+                playerInventory[items[i]] -= quantities[i];
+            }
+        }
+
+        return true;
+    }
     public int GetInventoryItemCount(string item)
     {
         if (playerInventory.ContainsKey(item))
@@ -419,33 +506,62 @@ public class GameController : MonoBehaviour
     // CRAFTING METHODS
     public void CraftBambooSword()
     {
-        if (UseInventoryItems("bamboo", 15))
-        {
-            playerTools.Add("bamboo_sword", 1);
-            Debug.Log("Created bamboo sword");
-            GuiHint("Bamboo Sword Created.");
-            Player p = Player.Instance;
-            p.SetHint("Press 1 and 2 to swap between your tools!");
-        }
-        else
-        {
-            GuiHint("Insufficient Materials!");
-        }
-        
+        playerTools.Add("bamboo_sword", 1);
+        GuiHint("Bamboo Sword Created.");
+        Player p = Player.Instance;
+        p.SetHint("Press 1 and 2 to swap between your tools!");
+
     }
 
-    public void ShowCrafting()
+    public void CraftBambooSwordII()
     {
-        showingCrafting = true;
-        Time.timeScale = 0f;
+        playerTools.Add("bamboo_sword_II", 1);
+        GuiHint("Bamboo Sword II Created.");
     }
 
+    public void CraftThornedSword()
+    {
+        playerTools.Add("thorned_sword", 1);
+        GuiHint("Thorned Sword Created.");
+    }
+
+    public void CraftThornedSwordII()
+    {
+        playerTools.Add("thorned_sword_II", 1);
+        GuiHint("Thorned Sword II Created.");
+    }
+
+    public void CraftCornShooter()
+    {
+        playerTools.Add("corn_shooter", 1);
+        GuiHint("Corn Shooter Created.");
+    }
+
+    public void CraftCornShooterII()
+    {
+        playerTools.Add("corn_shooter_II", 1);
+        GuiHint("Corn Shooter II Created.");
+    }
+
+    public void CraftPotatoGun()
+    {
+        playerTools.Add("RPotatoG", 1);
+        GuiHint("RPotatoG Created.");
+    }
+
+    public void CraftPotatoGunII()
+    {
+        playerTools.Add("RPotatoG_II", 1);
+        GuiHint("RPotatoG Created.");
+    }
+
+    // END OF CRAFTING METHODS
     public void EndDay()
     {
         if (playerFellAsleep)
         {
-            Time.timeScale = 1f;
             playerFellAsleep = false;
+            Time.timeScale = 1f;
             Debug.Log("We fell asleep. Now we must fight with nothing good.");
             SaveStructures();
             SceneManager.LoadScene(1);
@@ -462,9 +578,8 @@ public class GameController : MonoBehaviour
         {
             Debug.Log("I cannot end the day");
         }
-        // now we would travel to the nightmare world
-        // Add check that they have a sworda
-       
+        playerFellAsleep = false;
+
     }
 
     public void ForceEndDay()
