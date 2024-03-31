@@ -166,3 +166,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 376c0b324d0dabf4a9a23f994adcbc79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerTransform: {fileID: 0}
+  walkableTilemap: {fileID: 0}
+  moveSpeed: 3

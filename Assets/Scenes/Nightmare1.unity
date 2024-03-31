@@ -1502,7 +1502,7 @@ GameObject:
   - component: {fileID: 582483587}
   - component: {fileID: 582483588}
   m_Layer: 0
-  m_Name: MapGenerator
+  m_Name: DungeonController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5775,8 +5775,8 @@ SceneRoots:
   - {fileID: 1888513303}
   - {fileID: 1606517320}
   - {fileID: 552583473}
+  - {fileID: 582483587}
   - {fileID: 1409485}
   - {fileID: 1996672022}
   - {fileID: 522237161}
   - {fileID: 317100143}
-  - {fileID: 582483587}
