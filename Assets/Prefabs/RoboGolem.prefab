@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 9006326966577569545}
   - component: {fileID: 4140302431832012627}
   - component: {fileID: -6844215027362867340}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: RoboGolem
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -169,3 +169,7 @@ MonoBehaviour:
   playerTransform: {fileID: 0}
   walkableTilemap: {fileID: 0}
   moveSpeed: 3
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  checkRadius: 0.1

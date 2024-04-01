@@ -399,7 +399,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &123041514
 RectTransform:
   m_ObjectHideFlags: 0
@@ -490,7 +490,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &258783727
 RectTransform:
   m_ObjectHideFlags: 0
@@ -804,7 +804,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &337430633
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1485,12 +1485,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ae1b62291c82d458dde4800b8bc078, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventoryAdditions: {fileID: 0}
-  journalPanel: {fileID: 0}
-  craftingPanel: {fileID: 0}
-  inventoryPanel: {fileID: 0}
-  toolsText: {fileID: 0}
-  inventoryText: {fileID: 0}
+  treePrefab: {fileID: 0}
+  bambooRepairPrefab: {fileID: 0}
+  bambooFarmPrefab: {fileID: 0}
+  potatoRepairPrefab: {fileID: 0}
+  potatoFarmPrefab: {fileID: 0}
+  cornRepairPrefab: {fileID: 0}
+  cornFarmPrefab: {fileID: 0}
+  berryRepairPrefab: {fileID: 0}
+  berryFarmPrefab: {fileID: 0}
+  craftingRepairPrefab: {fileID: 0}
+  craftingBenchPrefab: {fileID: 0}
+  restrictedPrefab: {fileID: 0}
 --- !u!1 &582483586
 GameObject:
   m_ObjectHideFlags: 0
@@ -1567,7 +1573,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &600616691
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3331,7 +3337,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1300185867
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3403,7 +3409,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1390575041
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3655,7 +3661,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1644288823
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3790,7 +3796,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1755069840
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4018,7 +4024,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1855416095
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5619,7 +5625,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2127936918
 RectTransform:
   m_ObjectHideFlags: 0

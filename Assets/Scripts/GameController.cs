@@ -171,6 +171,11 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.N))
+        {
+            SceneManager.LoadScene(1);
+            currentScene = "dungeon";
+        }
         if(currentScene == "farm")
         {
             calendarText.SetText(dayCounter.ToString());    // I hate that it has come to this but something bad is happening and this is the only fix
