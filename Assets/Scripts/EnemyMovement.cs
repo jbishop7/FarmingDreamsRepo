@@ -8,7 +8,9 @@ public class EnemyMovement : MonoBehaviour
 {
     public Transform playerTransform;
     public Tilemap walkableTilemap;
-    public float moveSpeed = 5.0f; // Increased speed
+    public float moveSpeed = 5.0f;
+    public Animator _Animator;
+    public Rigidbody2D _Rigidbody;
 
     void Start()
     {
@@ -22,6 +24,9 @@ public class EnemyMovement : MonoBehaviour
         {
             playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         }
+
+        _Animator = GetComponent<Animator>();
+        _Rigidbody = GetComponent<Rigidbody2D>();
     }
 
     void Update()
@@ -33,26 +38,40 @@ public class EnemyMovement : MonoBehaviour
     {
         Vector3Int playerPosition = walkableTilemap.WorldToCell(playerTransform.position);
         Vector3Int currentPosition = walkableTilemap.WorldToCell(transform.position);
-        Vector3Int currentTarget = GetNextTargetTowardsPlayer(currentPosition, playerPosition);
 
-        // Move towards the current target with increased speed and more frequent updates
-        transform.position = Vector3.MoveTowards(transform.position, walkableTilemap.CellToWorld(currentTarget), moveSpeed * Time.deltaTime);
+        Vector3Int nextStep = FindNextStepTowardsPlayer(currentPosition, playerPosition);
+
+        Vector3 targetPosition = walkableTilemap.CellToWorld(nextStep) + new Vector3(0.5f, 0.5f, 0);
+        Vector3 movementDirection = targetPosition - transform.position;
+
+        if(movementDirection != Vector3.zero)
+        {
+            _Animator.SetFloat("speed", movementDirection.sqrMagnitude);
+            _Animator.SetFloat("horizontal", movementDirection.x);
+            _Animator.SetFloat("vertical", movementDirection.y);
+        }
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
     }
 
-    Vector3Int GetNextTargetTowardsPlayer(Vector3Int current, Vector3Int target)
+    Vector3Int FindNextStepTowardsPlayer(Vector3Int current, Vector3Int target)
     {
-        Vector3Int direction = target - current;
-        direction.x = (int)Mathf.Clamp(direction.x, -1, 1);
-        direction.y = (int)Mathf.Clamp(direction.y, -1, 1);
-        Vector3Int nextStep = current + direction;
+        Vector3Int bestStep = current;
+        float bestDistance = float.MaxValue;
 
-        if (walkableTilemap.HasTile(nextStep))
+        foreach (Vector3Int direction in new Vector3Int[] { Vector3Int.up, Vector3Int.down, Vector3Int.left, Vector3Int.right })
         {
-            return nextStep;
+            Vector3Int nextStep = current + direction;
+            if (walkableTilemap.HasTile(nextStep))
+            {
+                float distance = (walkableTilemap.CellToWorld(target) - walkableTilemap.CellToWorld(nextStep)).sqrMagnitude;
+                if (distance < bestDistance)
+                {
+                    bestStep = nextStep;
+                    bestDistance = distance;
+                }
+            }
         }
-        else
-        {
-            return current;
-        }
+
+        return bestStep;
     }
 }

@@ -5,6 +5,8 @@ using UnityEngine;
 public class EnemyPhasing : MonoBehaviour
 {
     public Transform playerTransform;
+    public Animator _Animator;
+    public Rigidbody2D _Rigidbody;
     public float moveSpeed = 5.0f; 
     private bool shouldPhase = false;
 
@@ -18,6 +20,9 @@ public class EnemyPhasing : MonoBehaviour
                 playerTransform = player.transform;
             }
         }
+
+        _Animator = GetComponent<Animator>();
+        _Rigidbody = GetComponent<Rigidbody2D>();
     }
 
     private void Update()
@@ -34,6 +39,10 @@ public class EnemyPhasing : MonoBehaviour
         {
             Vector3 directionToPlayer = playerTransform.position - transform.position;
             directionToPlayer.Normalize();
+
+            _Animator.SetFloat("speed", directionToPlayer.sqrMagnitude);
+            _Animator.SetFloat("horizontal", directionToPlayer.x);
+            _Animator.SetFloat("vertical", directionToPlayer.y);
 
             transform.position += directionToPlayer * moveSpeed * Time.deltaTime;
         }
