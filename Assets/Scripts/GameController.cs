@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -60,6 +61,9 @@ public class GameController : MonoBehaviour
     public GameObject restrictedPrefab;
 
     private int dayCounter = 0;
+
+    private string tool1 = "axe";
+    private string tool2 = "axe";  // will update this as we go, default to axe.
 
     private static GameController _instance;
 
@@ -260,6 +264,14 @@ public class GameController : MonoBehaviour
         else
         {
             // dungeon code here
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                DungeonSuccess();
+            }
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                DungeonFail();
+            }
         }
 
 
@@ -509,7 +521,7 @@ public class GameController : MonoBehaviour
         playerTools.Add("bamboo_sword", 1);
         GuiHint("Bamboo Sword Created.");
         Player p = Player.Instance;
-        p.SetHint("Press 1 and 2 to swap between your tools!");
+        p.SetHint("Go to the tent (when ready) to equip your new weapon for the Night!");
 
     }
 
@@ -553,6 +565,24 @@ public class GameController : MonoBehaviour
     {
         playerTools.Add("RPotatoG_II", 1);
         GuiHint("RPotatoG Created.");
+    }
+
+    public void CraftBerryAid()
+    {
+        AddToInventory("berry_aid", 1);
+        GuiHint("Berry Aid Created.");
+    }
+
+    public void CraftSpeedSlurp()
+    {
+        AddToInventory("speed_slurp", 1);
+        GuiHint("Speed Slurp Created.");
+    }
+
+    public void CraftResist()
+    {
+        AddToInventory("resist", 1);
+        GuiHint("Resist Buff Created.");
     }
 
     // END OF CRAFTING METHODS
@@ -899,4 +929,45 @@ public class GameController : MonoBehaviour
         return dayCounter;
     }
 
+    public Dictionary<string, int> GetPlayerTools()
+    {
+        Dictionary<string, int> tools = new();
+
+        foreach(var(key, val) in playerTools)
+        {
+            if (playerTools[key] > 0)
+            {
+                tools.Add(key, val);
+            }
+        }
+
+        return tools;
+    }
+
+    public void UpdateToolsInUse(string t1, string t2)
+    {
+        tool1 = t1;
+        tool2 = t2;
+    }
+
+    public string[] GetToolsInUse()
+    {
+        string[] toolsInUse = { tool1, tool2 };
+        return toolsInUse;
+    }
+
+    public void DungeonSuccess()
+    {
+        Debug.Log("Great success in the dungeon");
+        UpdateToolsInUse("axe", "axe"); // they should be back on the farm, don't need a sword.
+        // and then give rewards
+        SceneManager.LoadScene(0);
+    }
+
+    public void DungeonFail()
+    {
+        Debug.Log("Great failure in the dungeon");
+        UpdateToolsInUse("axe", "axe");
+        SceneManager.LoadScene(0);
+    }
 }

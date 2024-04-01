@@ -160,6 +160,7 @@ public class Crafting : MonoBehaviour
         resistCosts.Add("bamboo", 1);
 
     }
+
     public void ShowCrafting()
     {
         craftingPanel.SetActive(true);
@@ -245,7 +246,6 @@ public class Crafting : MonoBehaviour
 
         if (gc.UseInventoryToolsAndItems(items.ToArray(), quantities.ToArray()))
         {
-            Debug.Log("We could build this!");
             switch(toolToBuild)
             {
                 case "bamboo_sword":
@@ -282,7 +282,34 @@ public class Crafting : MonoBehaviour
     
     private void CraftItem()
     {
+        // gotta check that we have all the materials. 
+        List<string> items = new();
+        List<int> quantities = new();
+        foreach (var (key, val) in itemToCraftCosts)
+        {
+            items.Add(key);
+            quantities.Add(val);
+        }
 
+        if (gc.UseInventoryToolsAndItems(items.ToArray(), quantities.ToArray()))
+        {
+            switch (itemToCraft)
+            {
+                case "berry_aid":
+                    gc.CraftBerryAid();
+                    break;
+                case "speed_slurp":
+                    gc.CraftSpeedSlurp();
+                    break;
+                case "resist":
+                    gc.CraftResist();
+                    break;
+            }
+        }
+        else
+        {
+            gc.GuiHint("Not enough materials.");
+        }
     }
     private void UpdateItemOffer(int change)
     {
