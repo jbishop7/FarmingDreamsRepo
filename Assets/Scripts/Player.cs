@@ -16,6 +16,7 @@ public class Player : MonoBehaviour
     private Vector2 toolToMouseVector = new Vector3(0, 0, 0);
 
     public GameObject tool; // this is the tool parent, holds all tools. 
+    private GameObject AttackArea;
     private Animator toolAnimator;
 
     private Tool tool1 = null;
@@ -24,6 +25,7 @@ public class Player : MonoBehaviour
 
     // private float toolUseTimer = 0.5f;
     private bool usingTool = false;
+    private bool attacking = false;
 
     private CraftingBench craftingBench = null;
 
@@ -80,7 +82,8 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        
+        AttackArea = GameObject.Find("AttackArea");
+        AttackArea.SetActive(attacking);
     }
 
     // Update is called once per frame
@@ -88,6 +91,8 @@ public class Player : MonoBehaviour
     {
         movement.x = Input.GetAxis("Horizontal");
         movement.y = Input.GetAxis("Vertical");
+
+        RotateAttackArea();
 
         animator.SetFloat("horizontal", movement.x);
         animator.SetFloat("vertical", movement.y);
@@ -139,6 +144,7 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             UseTool();
+            Attack();
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -288,6 +294,34 @@ public class Player : MonoBehaviour
 
         trb.rotation = angle;
 
+    }
+
+    private void Attack()
+    {
+        if (!attacking)
+        {
+            Debug.Log("Performing attack");
+            StartCoroutine(PerformAttack()); 
+        }
+    }
+
+    private IEnumerator PerformAttack()
+    {
+        attacking = true;
+        AttackArea.SetActive(true);
+
+        yield return new WaitForSeconds(0.5f);
+
+        attacking = false;
+        AttackArea.SetActive(false);
+    }
+
+    private void RotateAttackArea()
+    {
+        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 attackAreaToMouseVector = mousePosition - new Vector2(transform.position.x, transform.position.y);
+        float angle = Mathf.Atan2(attackAreaToMouseVector.y, attackAreaToMouseVector.x) * Mathf.Rad2Deg;
+        AttackArea.transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
     private void UseTool()

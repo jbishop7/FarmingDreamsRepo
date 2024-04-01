@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyPhasing : MonoBehaviour
+public class EyeballSquid : MonoBehaviour
 {
     public Transform playerTransform;
     public Animator _Animator;
@@ -11,6 +11,9 @@ public class EnemyPhasing : MonoBehaviour
     private bool shouldPhase = false;
     private bool attackPlayer = false;
     public float attackRange = 2.5f;
+
+    [SerializeField] float health, maxHealth = 5f;
+    [SerializeField] FloatingHealthbar healthbar;
 
     private void Start()
     {
@@ -21,6 +24,10 @@ public class EnemyPhasing : MonoBehaviour
 
         _Animator = GetComponent<Animator>();
         _Rigidbody = GetComponent<Rigidbody2D>();
+        healthbar = GetComponentInChildren<FloatingHealthbar>();
+
+        health = maxHealth;
+        healthbar.updateHealthbar(health, maxHealth);
     }
 
     private void Update()
@@ -75,6 +82,22 @@ public class EnemyPhasing : MonoBehaviour
             Debug.Log("Player out of phasing/movement range");
             shouldPhase = false;
         }
+    }
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        healthbar.updateHealthbar(health, maxHealth);
+
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+
+    public void Die()
+    {
+        Destroy(gameObject);
     }
 }
 

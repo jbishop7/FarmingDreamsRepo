@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections;
 
-public class EnemyMovement : MonoBehaviour
+public class RoboGolem : MonoBehaviour
 {
     public Transform playerTransform;
     public Tilemap walkableTilemap;
