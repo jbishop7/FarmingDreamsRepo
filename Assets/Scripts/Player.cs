@@ -310,7 +310,7 @@ public class Player : MonoBehaviour
         attacking = true;
         AttackArea.SetActive(true);
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
         attacking = false;
         AttackArea.SetActive(false);

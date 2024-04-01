@@ -15,10 +15,6 @@ public class AttackManager : MonoBehaviour
     void Start()
     {
         GameObject player = GameObject.FindWithTag("Player");
-        if(player == null)
-        {
-
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -31,12 +27,12 @@ public class AttackManager : MonoBehaviour
 
             if(roboGolem != null )
             {
-                roboGolem.TakeDamage(1);
+                roboGolem.TakeDamage(1, 1, transform.position);
                 //roboGolem.TakeDamage(tool.GetDamage());
             }
             if(eyeballSquid != null )
             {
-                eyeballSquid.TakeDamage(1);
+                eyeballSquid.TakeDamage(1, 1, transform.position);
                 //eyeballSquid.TakeDamage(tool.GetDamage());
             }
         }

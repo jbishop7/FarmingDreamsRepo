@@ -82,7 +82,7 @@ public class RoboGolem : MonoBehaviour
         return bestStep;
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, float knockbackDistance, Vector3 AttackPos)
     {
         health -= damage;
         healthbar.updateHealthbar(health, maxHealth);
@@ -90,6 +90,12 @@ public class RoboGolem : MonoBehaviour
         if(health <= 0)
         {
             Die();
+        }
+        else 
+        { 
+            Vector3 knockbackDir = transform.position - AttackPos;
+            knockbackDir = knockbackDir.normalized * knockbackDistance;
+            transform.position += knockbackDir;
         }
     }
 
