@@ -12,6 +12,9 @@ public class EnemyMovement : MonoBehaviour
     public Animator _Animator;
     public Rigidbody2D _Rigidbody;
 
+    [SerializeField] float health, maxHealth = 5f;
+    [SerializeField] FloatingHealthbar healthbar;
+
     void Start()
     {
         GameObject groundGameObject = GameObject.Find("Ground");
@@ -27,6 +30,10 @@ public class EnemyMovement : MonoBehaviour
 
         _Animator = GetComponent<Animator>();
         _Rigidbody = GetComponent<Rigidbody2D>();
+        healthbar = GetComponentInChildren<FloatingHealthbar>();
+
+        health = maxHealth;
+        healthbar.updateHealthbar(health, maxHealth);
     }
 
     void Update()
@@ -44,7 +51,7 @@ public class EnemyMovement : MonoBehaviour
         Vector3 targetPosition = walkableTilemap.CellToWorld(nextStep) + new Vector3(0.5f, 0.5f, 0);
         Vector3 movementDirection = targetPosition - transform.position;
 
-        if(movementDirection != Vector3.zero)
+        if (movementDirection != Vector3.zero)
         {
             _Animator.SetFloat("speed", movementDirection.sqrMagnitude);
             _Animator.SetFloat("horizontal", movementDirection.x);
@@ -73,5 +80,21 @@ public class EnemyMovement : MonoBehaviour
         }
 
         return bestStep;
+    }
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        healthbar.updateHealthbar(health, maxHealth);
+
+        if(health <= 0)
+        {
+            Die();
+        }
+    }
+
+    public void Die()
+    {
+        Destroy(gameObject);
     }
 }

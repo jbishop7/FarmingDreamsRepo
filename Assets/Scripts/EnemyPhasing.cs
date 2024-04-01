@@ -7,18 +7,16 @@ public class EnemyPhasing : MonoBehaviour
     public Transform playerTransform;
     public Animator _Animator;
     public Rigidbody2D _Rigidbody;
-    public float moveSpeed = 5.0f; 
+    public float moveSpeed = 5.0f;
     private bool shouldPhase = false;
+    private bool attackPlayer = false;
+    public float attackRange = 2.5f;
 
     private void Start()
     {
         if (playerTransform == null)
         {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-            {
-                playerTransform = player.transform;
-            }
+            playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         }
 
         _Animator = GetComponent<Animator>();
@@ -31,37 +29,52 @@ public class EnemyPhasing : MonoBehaviour
         {
             Phase();
         }
+
+        if (Vector3.Distance(transform.position, playerTransform.position) <= attackRange)
+        {
+            if (!attackPlayer)
+            {
+                Debug.Log("Player entered attack range");
+                attackPlayer = true;
+                _Animator.SetTrigger("attack");
+            }
+        }
+        else
+        {
+            if (attackPlayer)
+            {
+                Debug.Log("Player exited attack range");
+                attackPlayer = false;
+                _Animator.ResetTrigger("attack");
+            }
+        }
     }
 
     private void Phase()
     {
-        if (playerTransform != null)
-        {
-            Vector3 directionToPlayer = playerTransform.position - transform.position;
-            directionToPlayer.Normalize();
-
-            _Animator.SetFloat("speed", directionToPlayer.sqrMagnitude);
-            _Animator.SetFloat("horizontal", directionToPlayer.x);
-            _Animator.SetFloat("vertical", directionToPlayer.y);
-
-            transform.position += directionToPlayer * moveSpeed * Time.deltaTime;
-        }
+        Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
+        _Animator.SetFloat("speed", moveSpeed);
+        _Animator.SetFloat("horizontal", directionToPlayer.x);
+        _Animator.SetFloat("vertical", directionToPlayer.y);
+        _Rigidbody.MovePosition(_Rigidbody.position + new Vector2(directionToPlayer.x, directionToPlayer.y) * (moveSpeed * Time.fixedDeltaTime));
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.CompareTag("Player"))
         {
-            Debug.Log("collided");
+            Debug.Log("Player detected for phasing/movement");
             shouldPhase = true;
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.CompareTag("Player"))
         {
-            Debug.Log("un collided");
+            Debug.Log("Player out of phasing/movement range");
             shouldPhase = false;
         }
     }
 }
+
