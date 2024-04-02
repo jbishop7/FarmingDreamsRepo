@@ -135,6 +135,7 @@ public class Enemy : MonoBehaviour
             TakeDamage(t.damage);
             Debug.Log($"{ t.damage } { t.name}");
         }
+        
     }
 
 }

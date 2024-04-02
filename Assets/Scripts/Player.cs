@@ -59,22 +59,37 @@ public class Player : MonoBehaviour
             _instance = this;
         }
         playerHints.SetText("");
+
+        // Get the tools in use here...
+        GameController gc = GameController.Instance;
+        string[] toolsInUse = gc.GetToolsInUse();
+        // there is just going to be 2 tools in use. 
+        // so we need to grab them, run them through a switch, and identify which tools to use. 
+        string firstTool = toolsInUse[0];
+        string secondTool = toolsInUse[1];
+        
         Tool[] tools = tool.GetComponentsInChildren<Tool>();
-        foreach (var item in tools)
+
+        foreach (var item in tools) // first disable ALL tools.
         {
-            if (item.gameObject.name == "axe")
+            item.gameObject.SetActive(false);
+        }
+
+        foreach (var item in tools) // set the first tool
+        {
+            if (item.gameObject.name == firstTool)
             {
                 tool1 = item;
                 toolAnimator = tool1.gameObject.GetComponent<Animator>();
                 currentTool = item;
             }
-            if (item.gameObject.name == "bamboo_sword")
-            {
+
+            if (item.gameObject.name == secondTool){
                 tool2 = item;
             }
         }
-
         tool2.gameObject.SetActive(false);
+        tool1.gameObject.SetActive(true);
         
     }
 
@@ -124,8 +139,10 @@ public class Player : MonoBehaviour
         if (tent != null && Input.GetKeyDown(KeyCode.E))
         {
             SetHint("");
-            GameController gc = GameController.Instance;
-            gc.EndDay();
+            Preparation p = Preparation.Instance;
+            p.ShowPreparations();
+            /*GameController gc = GameController.Instance;
+            gc.EndDay();*/
         }
 
         if (merchant != null && Input.GetKeyDown(KeyCode.E))
@@ -150,15 +167,10 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            GameController gc = GameController.Instance;
-            if (gc.CheckToolInventory("bamboo_sword"))
-            {
-                toolAnimator = tool2.gameObject.GetComponent<Animator>();
-                tool2.gameObject.SetActive(true);
-                tool1.gameObject.SetActive(false);
-                currentTool = tool2;
-            }
-           
+            toolAnimator = tool2.gameObject.GetComponent<Animator>();
+            tool1.gameObject.SetActive(false);
+            tool2.gameObject.SetActive(true);
+            currentTool = tool2;
         }
 
     }
