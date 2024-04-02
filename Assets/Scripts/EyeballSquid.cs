@@ -7,6 +7,7 @@ public class EyeballSquid : MonoBehaviour
     public Transform playerTransform;
     public Animator _Animator;
     public Rigidbody2D _Rigidbody;
+    public Collider2D _Collider;
     public float moveSpeed = 5.0f;
     private bool shouldPhase = false;
     public float attackRange = 2.5f;
@@ -30,6 +31,8 @@ public class EyeballSquid : MonoBehaviour
 
         _Animator = GetComponent<Animator>();
         _Rigidbody = GetComponent<Rigidbody2D>();
+        _Collider = GetComponent<Collider2D>();
+
         healthbar = GetComponentInChildren<FloatingHealthbar>();
         player = GameObject.FindWithTag("Player").GetComponent<Player>();
 
@@ -119,7 +122,7 @@ public class EyeballSquid : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision == _Collider && collision.CompareTag("Player"))
         {
             if (DamageCoroutine != null)
             {
@@ -131,7 +134,7 @@ public class EyeballSquid : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision == _Collider && collision.CompareTag("Player"))
         {
             if (DamageCoroutine == null)
             {

@@ -57,7 +57,7 @@ public class DungeonController : MonoBehaviour
     public void SpawnEnemies(int eyes, int robos, int boss)
     {
         SpawnEnemy(_Eyeball, eyes);
-        SpawnEnemy(_RoboGolem, robos);
+        //SpawnEnemy(_RoboGolem, robos);
         // SpawnEnemy(_Boss, boss);
     }
 

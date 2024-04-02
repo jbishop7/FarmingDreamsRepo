@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
     private Vector2 toolToMouseVector = new Vector3(0, 0, 0);
 
     public GameObject tool; // this is the tool parent, holds all tools. 
-    private GameObject AttackArea;
+    [SerializeField] private GameObject AttackArea;
     private Animator toolAnimator;
 
     private Tool tool1 = null;
@@ -107,12 +107,16 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        //AttackArea = GameObject.Find("AttackArea");
+        if(AttackArea == null)
+        {
+            AttackArea = GameObject.Find("AttackArea");
+        }
+        
         gameController = GameController.Instance;
-        // AttackArea.SetActive(attacking);
+        AttackArea.SetActive(attacking);
 
         health = maxHealth;
-        // healthbar.updateHealthbar(health, maxHealth);
+        healthbar.updateHealthbar(health, maxHealth);
     }
 
     // Update is called once per frame
@@ -121,7 +125,11 @@ public class Player : MonoBehaviour
         movement.x = Input.GetAxis("Horizontal");
         movement.y = Input.GetAxis("Vertical");
 
-        RotateAttackArea();
+        if(gameController.GetLevelType() == "dungeon")
+        {
+            RotateAttackArea();
+        }
+        
 
         animator.SetFloat("horizontal", movement.x);
         animator.SetFloat("vertical", movement.y);
@@ -333,21 +341,28 @@ public class Player : MonoBehaviour
     private IEnumerator PerformAttack()
     {
         attacking = true;
-        // AttackArea.SetActive(true);
+        AttackArea.SetActive(true);
 
         yield return new WaitForSeconds(0.5f);
 
         attacking = false;
-        // AttackArea.SetActive(false);
+        AttackArea.SetActive(false);
     }
 
     private void RotateAttackArea()
     {
-        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 attackAreaToMouseVector = mousePosition - new Vector2(transform.position.x, transform.position.y);
-        float angle = Mathf.Atan2(attackAreaToMouseVector.y, attackAreaToMouseVector.x) * Mathf.Rad2Deg;
-        // AttackArea.transform.rotation = Quaternion.Euler(0, 0, angle);
-        tool.transform.rotation = Quaternion.Euler(0, 0, angle);
+        if(AttackArea != null)
+        {
+            mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 attackAreaToMouseVector = mousePosition - new Vector2(transform.position.x, transform.position.y);
+            float angle = Mathf.Atan2(attackAreaToMouseVector.y, attackAreaToMouseVector.x) * Mathf.Rad2Deg;
+            AttackArea.transform.rotation = Quaternion.Euler(0, 0, angle);
+            tool.transform.rotation = Quaternion.Euler(0, 0, angle);
+        }
+        else
+        {
+            Debug.Log("Attack area is null");
+        }
     }
 
     public void TakeDamage(float damage)
