@@ -300,7 +300,7 @@ public class GameController : MonoBehaviour
 
             if (playerFellAsleep == true)
             {
-                Debug.Log("Hello?");
+                Debug.Log("Player fell asleep?");
                 Time.timeScale = 0f;
             }
             if (playerFellAsleep && Input.GetKeyDown(KeyCode.RightShift))
