@@ -66,8 +66,8 @@ public class GameController : MonoBehaviour
 
     private string tool1 = "axe";
     private string tool2 = "axe";  // will update this as we go, default to axe.
-    private string buff1 = "";
-    private string buff2 = "";
+    private string buff1 = "";  // speed_slurp, or resist   
+    private string buff2 = "";  
 
     private int techPoints = 9; // use these for the tech tree.
 
@@ -203,6 +203,14 @@ public class GameController : MonoBehaviour
             // Debug.Log("We are NOT on the farm.");
             // check for buffs
             Debug.Log($"{buff1}, {buff2}");
+            DungeonController dc = DungeonController.Instance;
+            switch (dayCounter)
+            {
+                case 1:
+                    dc.SpawnEnemies(1, 4, 0);
+                    break;
+            }
+            
         }
     }
 
@@ -1302,5 +1310,10 @@ public class GameController : MonoBehaviour
             GuiHint("Corn Shooter II is available to craft. See your crafting bench.");
         }
         cornGun2 = b;
+    }
+
+    public string GetLevelType()
+    {
+        return currentScene;
     }
 }

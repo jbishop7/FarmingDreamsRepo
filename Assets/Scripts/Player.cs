@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -43,7 +44,7 @@ public class Player : MonoBehaviour
 
     private Merchant merchant = null;
 
-    private GameController gameController = null;
+    private GameController gameController;
 
     public TextMeshProUGUI playerHints;
 
@@ -71,6 +72,7 @@ public class Player : MonoBehaviour
 
         // Get the tools in use here...
         GameController gc = GameController.Instance;
+        gameController = gc;
         string[] toolsInUse = gc.GetToolsInUse();
         // there is just going to be 2 tools in use. 
         // so we need to grab them, run them through a switch, and identify which tools to use. 
@@ -105,12 +107,12 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        AttackArea = GameObject.Find("AttackArea");
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
-        AttackArea.SetActive(attacking);
+        //AttackArea = GameObject.Find("AttackArea");
+        gameController = GameController.Instance;
+        // AttackArea.SetActive(attacking);
 
         health = maxHealth;
-        healthbar.updateHealthbar(health, maxHealth);
+        // healthbar.updateHealthbar(health, maxHealth);
     }
 
     // Update is called once per frame
@@ -331,12 +333,12 @@ public class Player : MonoBehaviour
     private IEnumerator PerformAttack()
     {
         attacking = true;
-        AttackArea.SetActive(true);
+        // AttackArea.SetActive(true);
 
         yield return new WaitForSeconds(0.5f);
 
         attacking = false;
-        AttackArea.SetActive(false);
+        // AttackArea.SetActive(false);
     }
 
     private void RotateAttackArea()
@@ -344,7 +346,8 @@ public class Player : MonoBehaviour
         mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 attackAreaToMouseVector = mousePosition - new Vector2(transform.position.x, transform.position.y);
         float angle = Mathf.Atan2(attackAreaToMouseVector.y, attackAreaToMouseVector.x) * Mathf.Rad2Deg;
-        AttackArea.transform.rotation = Quaternion.Euler(0, 0, angle);
+        // AttackArea.transform.rotation = Quaternion.Euler(0, 0, angle);
+        tool.transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
     public void TakeDamage(float damage)
@@ -405,5 +408,23 @@ public class Player : MonoBehaviour
     public Tool CurrentTool()
     {
         return currentTool;
+    }
+
+    public void HealPlayer(float healthAdded)
+    {
+        health += healthAdded;
+    }
+    private void HealPlayer()
+    {
+        if (gameController.GetLevelType() != "dungeon")
+        {
+            return;
+        }
+        if (gameController.UseInventoryItems("berry_aid", 1))
+        {
+            // heal the player
+            // update the health text 
+        }
+        // otherwise do nothing
     }
 }

@@ -27779,7 +27779,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1378558655
 RectTransform:
   m_ObjectHideFlags: 0
@@ -28457,7 +28457,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1439062700
 RectTransform:
   m_ObjectHideFlags: 0
@@ -34237,6 +34237,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 1888513304}
   animator: {fileID: 1888513301}
+  health: 0
+  maxHealth: 10
+  healthbar: {fileID: 0}
   tool: {fileID: 1631898268}
   playerHints: {fileID: 1378558656}
 --- !u!61 &1888513306

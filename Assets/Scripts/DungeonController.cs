@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class MapGenerator : MonoBehaviour
+public class DungeonController : MonoBehaviour
 {
     public Tilemap walkableTilemap;
     public Tilemap boundaryTilemap;
@@ -24,15 +24,27 @@ public class MapGenerator : MonoBehaviour
 
     public GameObject _RoboGolem;
     public GameObject _Eyeball;
+    public GameObject _Boss;
+
     public int minSpawnDistanceFromPlayer = 10;
 
     private List<Vector3Int> roomCenters;
     private List<Vector3Int> occupiedSpawnLocations = new List<Vector3Int>();
     private List<Vector3> enemySpawnPoints = new List<Vector3>();
 
+    public static DungeonController _instance;
+
+    public static DungeonController Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
+
     private void Awake()
     {
-        
+        _instance = this;
     }
 
     void Start()
@@ -40,6 +52,13 @@ public class MapGenerator : MonoBehaviour
         GenerateDungeon();
         SpawnEnemy(_Eyeball, 1);
         SpawnEnemy(_RoboGolem, 2);
+    }
+
+    public void SpawnEnemies(int eyes, int robos, int boss)
+    {
+        SpawnEnemy(_Eyeball, eyes);
+        SpawnEnemy(_RoboGolem, robos);
+        // SpawnEnemy(_Boss, boss);
     }
 
 
