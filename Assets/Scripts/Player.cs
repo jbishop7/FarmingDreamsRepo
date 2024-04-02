@@ -311,7 +311,6 @@ public class Player : MonoBehaviour
     {
         if (!attacking)
         {
-            Debug.Log("Performing attack");
             StartCoroutine(PerformAttack()); 
         }
     }
@@ -338,6 +337,7 @@ public class Player : MonoBehaviour
     public void TakeDamage(float damage)
     {
         health -= damage;
+        Debug.Log("I took damage: " + damage);
         healthbar.updateHealthbar(health, maxHealth);
 
         if(!isInvulnerable)

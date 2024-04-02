@@ -685,7 +685,11 @@ MonoBehaviour:
   _Rigidbody: {fileID: 0}
   moveSpeed: 5
   attackRange: 2.5
+  bulletSpeed: 10
+  lastAttackTime: 0
+  attackCooldown: 1.5
   player: {fileID: 0}
+  bulletPrefab: {fileID: 8409621554132645696, guid: 6b20b186c7f98c54fb923d4f2447d880, type: 3}
   health: 0
   maxHealth: 5
   healthbar: {fileID: 0}
