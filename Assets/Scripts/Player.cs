@@ -77,7 +77,7 @@ public class Player : MonoBehaviour
 
         foreach (var item in tools) // set the first tool
         {
-            Debug.Log($"item: {item.gameObject.name} firstTool: {firstTool} secondTool: {secondTool}");
+           // Debug.Log($"item: {item.gameObject.name} firstTool: {firstTool} secondTool: {secondTool}");
             if (item.gameObject.name == firstTool)
             {
                 tool1 = item;

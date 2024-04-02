@@ -10,21 +10,29 @@ public class Preparation : MonoBehaviour
     private GameController gc;
     public TMP_Dropdown tool1Dropdown;
     public TMP_Dropdown tool2Dropdown;
+    public TextMeshProUGUI item1Text;
+    public TextMeshProUGUI item2Text;
+
+    public TMP_Dropdown buff1Dropdown;
+    public TMP_Dropdown buff2Dropdown;
+    public TextMeshProUGUI buff1Text;
+    public TextMeshProUGUI buff2Text;
 
     public GameObject preparationsPanel;
     private bool showPreparations = false;
 
     public Button advance;
 
-    public TextMeshProUGUI item1Text;
-    public TextMeshProUGUI item2Text;
-
     public static Preparation _instance;
 
     private string tool1 = "";
     private string tool2 = "";
 
+    private string buff1 = "";
+    private string buff2 = "";
+
     Dictionary<string, int> playerTools = new();
+    Dictionary<string, int> playerBuffs = new();
 
     public static Preparation Instance
     {
@@ -53,6 +61,16 @@ public class Preparation : MonoBehaviour
         advance.onClick.AddListener(delegate
         {
             Advance();
+        });
+
+        buff1Dropdown.onValueChanged.AddListener(delegate
+        {
+            UpdateBuff1(buff1Dropdown.value);
+        });
+
+        buff2Dropdown.onValueChanged.AddListener(delegate
+        {
+            UpdateBuff2(buff2Dropdown.value);
         });
 
         gc = GameController.Instance;
@@ -87,10 +105,29 @@ public class Preparation : MonoBehaviour
         UpdateTool2(0);
     }
 
+    void PopulateBuffDropdowns()
+    {
+        playerBuffs = gc.GetPlayerBuffs();
+        buff1Dropdown.ClearOptions();
+        buff2Dropdown.ClearOptions();
+
+        List<string> buffs = new();
+        buffs.Add("none");
+        foreach(var(key, val) in playerBuffs)
+        {
+            buffs.Add(key);
+        }
+        buff1Dropdown.AddOptions(buffs);
+        buff2Dropdown.AddOptions(buffs);
+        UpdateBuff1(0);
+        UpdateBuff2(0);
+
+    }
     public void ShowPreparations()
     {
         showPreparations = true;
         PopulateToolDropdowns();
+        PopulateBuffDropdowns();
         preparationsPanel.SetActive(true);
     }
 
@@ -123,8 +160,41 @@ public class Preparation : MonoBehaviour
         item2Text.SetText($"Tool 2: {tool2}");
     }
 
+    private void UpdateBuff1(int change)
+    {
+        int i = 0;
+        foreach (var (key, val) in playerBuffs)
+        {
+            if (i == change)
+            {
+                buff1 = key;
+            }
+            i++;
+        }
+        item1Text.SetText($"Tool 1: {tool1}");
+    }
+
+    private void UpdateBuff2(int change)
+    {
+        int i = 0;
+        foreach (var (key, val) in playerBuffs)
+        {
+            if (i == change)
+            {
+                buff2 = key;
+            }
+            i++;
+        }
+        item1Text.SetText($"Tool 1: {tool1}");
+    }
+
     private void Advance()
     {
+        if (buff1 == buff2)
+        {
+            buff2 = "";
+        }
+        gc.UpdateBuffsInUse(buff1, buff2);
         gc.UpdateToolsInUse(tool1, tool2);
         preparationsPanel.SetActive(false);
         showPreparations = false;

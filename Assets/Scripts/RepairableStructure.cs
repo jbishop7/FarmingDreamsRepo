@@ -28,6 +28,7 @@ public class RepairableStructure : MonoBehaviour
                     break;
             }
         }
+
     }
 
     // Update is called once per frame
@@ -49,6 +50,37 @@ public class RepairableStructure : MonoBehaviour
     public void Repair()
     {
         GameController gc = GameController.Instance;
+
+        if (gameObject.name.Contains("Potato"))
+        {
+            if(gc.PotatoEnabled() == false)
+            {
+                textDisplayed = true;
+                text.SetText("Use the Tech Tree to unlock this crop.");
+                return;
+            }
+        }
+
+        if (gameObject.name.Contains("Corn"))
+        {
+            if (gc.CornEnabled() == false)
+            {
+                textDisplayed = true;
+                text.SetText("Use the Tech Tree to unlock this crop.");
+                return;
+            }
+        }
+
+        if (gameObject.name.Contains("Berry"))
+        {
+            if (gc.BerryEnabled() == false)
+            {
+                textDisplayed = true;
+                text.SetText("Use the Tech Tree to unlock this crop.");
+                return;
+            }
+        }
+
         if (gameObject.name.Contains("restricted") && gc.GetDayCount() < 2)
         {
             textDisplayed = true;

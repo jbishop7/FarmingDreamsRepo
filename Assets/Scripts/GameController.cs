@@ -35,6 +35,8 @@ public class GameController : MonoBehaviour
     private TextMeshProUGUI inventoryText;
     private bool showingInventory = false;
 
+    private TextMeshProUGUI techPointsText;
+
     private string currentScene = "farm"; // otherwise could be "dungeon"
     private bool playerFellAsleep = false;
 
@@ -64,6 +66,29 @@ public class GameController : MonoBehaviour
 
     private string tool1 = "axe";
     private string tool2 = "axe";  // will update this as we go, default to axe.
+    private string buff1 = "";
+    private string buff2 = "";
+
+    private int techPoints = 9; // use these for the tech tree.
+
+    // a ridiculous amount of bools for the tech tree
+    private bool berryEnabled = false;
+    private bool berryBountiful = false;
+    private bool berrySpeed = false;
+    private bool berrySword = false;
+    private bool berrySword2 = false;
+
+    private bool potatoEnabled = false;
+    private bool potatoBountiful = false;
+    private bool potatoSpeed = false;
+    private bool potatoGun = false;
+    private bool potatoGun2 = false;
+
+    private bool cornEnabled = false;
+    private bool cornBountiful = false;
+    private bool cornSpeed = false;
+    private bool cornGun = false;
+    private bool cornGun2 = false;
 
     private static GameController _instance;
 
@@ -80,7 +105,7 @@ public class GameController : MonoBehaviour
     }
 
     private void Awake()
-    { 
+    {
         if (_instance != null)
         {
             Destroy(gameObject);
@@ -95,10 +120,6 @@ public class GameController : MonoBehaviour
             playerInventory.Add("bamboo", 100);
             playerInventory.Add("ingot", 1);
         }
-
-        
-        
-
     }
     void Start()
     {
@@ -118,6 +139,8 @@ public class GameController : MonoBehaviour
             inventoryPanel = null;
             journalPanel = null;
             craftingPanel = null;
+            buff1 = "";
+            buff2 = "";
 
             TextMeshProUGUI[] texts = FindObjectsOfType<TextMeshProUGUI>(true);
             Panel[] panels = FindObjectsOfType<Panel>(true);
@@ -141,6 +164,8 @@ public class GameController : MonoBehaviour
                         journalGoalText = ui; break;
                     case "JournalText":
                         journalText = ui; break;
+                    case "TechPointsText":
+                        techPointsText = ui; break;
 
                 }
                 
@@ -179,6 +204,7 @@ public class GameController : MonoBehaviour
         {
             calendarText.SetText(dayCounter.ToString());    // I hate that it has come to this but something bad is happening and this is the only fix
             moneyText.SetText($"{playerGold}");
+            techPointsText.SetText($"{techPoints}");
 
 
             if (startTimer)
@@ -208,6 +234,18 @@ public class GameController : MonoBehaviour
                 Time.timeScale = 1f;
             }
 
+            if (Input.GetKeyDown(KeyCode.U))
+            {
+                TechManager tm = TechManager.Instance;
+                tm.ShowTechTree();
+            }
+
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                TechMenu techMenu = TechMenu.Instance;
+                techMenu.ShowCurrentTech();
+            }
+
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 if (showingCrafting || showingInventory)
@@ -217,6 +255,7 @@ public class GameController : MonoBehaviour
                     showingJournal = false;
                 }
             }
+
 
             /*if (showingCrafting)
             {
@@ -491,6 +530,20 @@ public class GameController : MonoBehaviour
         moneyText.SetText($"{playerGold}");
     }
 
+    public void Sell5Item(string item, int price)
+    {
+        // so we are just going to sell 1 of this item every time we click it
+        if (playerInventory.ContainsKey(item))
+        {
+            if (playerInventory[item] > 5)
+            {
+                playerInventory[item] -= 5;
+                playerGold += price * 5;
+            }
+        }
+        moneyText.SetText($"{playerGold}");
+    }
+
     public int BuyItem(string item, int price)
     {
         if (playerGold >= price)
@@ -500,7 +553,7 @@ public class GameController : MonoBehaviour
         }
         moneyText.SetText($"{playerGold}");
         return playerGold;
-        
+      
     }
     public bool CheckToolInventory(string tool)
     {
@@ -598,7 +651,7 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        if (CheckToolInventory("bamboo_sword"))
+        if (CheckToolInventory("bamboo_sword")) // TODO get rid of this shit
         {
             Debug.Log("I want to end the day.");
             SaveStructures();
@@ -871,7 +924,7 @@ public class GameController : MonoBehaviour
             new Vector3(-3.91f, -7.05f, 0f),   // restricteds
             new Vector3(13.1f, -5.76f, 0f),
             new Vector3(15.02f, 9.3f, 0f),
-            new Vector3(23.23f, -2.07f, 0f),
+            new Vector3(23.04f, -2.07f, 0f),
             new Vector3(6.24f, -0.29f, 0f),  // this one is rotated -41.16 deg on the Z
             new Vector3(1.38f, 3.02f, 0f),  // bamboo farms now
             new Vector3(1.38f, 4.64f, 0f),
@@ -944,10 +997,36 @@ public class GameController : MonoBehaviour
         return tools;
     }
 
+    public Dictionary<string, int> GetPlayerBuffs()
+    {
+        Dictionary<string, int> buffs = new();
+
+        foreach(var(key, val) in playerInventory)
+        {
+            switch (key)
+            {
+                case "speed_slurp":
+                    buffs.Add(key, val);
+                    break;
+                case "resist":
+                    buffs.Add(key, val);
+                    break;
+            }
+        }
+
+        return buffs;
+    }
+
     public void UpdateToolsInUse(string t1, string t2)
     {
         tool1 = t1;
         tool2 = t2;
+    }
+
+    public void UpdateBuffsInUse(string b1, string b2)
+    {
+        buff1 = b1;
+        buff2 = b2;
     }
 
     public string[] GetToolsInUse()
@@ -961,6 +1040,10 @@ public class GameController : MonoBehaviour
         Debug.Log("Great success in the dungeon");
         UpdateToolsInUse("axe", "axe"); // they should be back on the farm, don't need a sword.
         // and then give rewards
+        techPoints++;
+        AddToInventory("dream_ingot", 1);
+        AddToInventory("wood", 10); // for example...
+        playerGold += 25;
         SceneManager.LoadScene(0);
     }
 
@@ -969,5 +1052,224 @@ public class GameController : MonoBehaviour
         Debug.Log("Great failure in the dungeon");
         UpdateToolsInUse("axe", "axe");
         SceneManager.LoadScene(0);
+    }
+
+    public int GetTechPoints()
+    {
+        return techPoints;
+    }
+
+    public void SpendTechPoints(int cost)
+    {
+        techPoints -= cost;
+    }
+    public bool BerryEnabled()
+    {
+        return berryEnabled;
+    }
+
+    public void SetBerryEnabled(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("Berries are now farmable. Go find them!");
+        }
+        berryEnabled = b;
+    }
+
+    public bool BerrySpeed()
+    {
+        return berrySpeed;
+    }
+
+    public void SetBerrySpeed(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("Berry growth rate doubled.");
+        }
+        berrySpeed = b;
+    }
+
+    public bool BerryBountiful()
+    {
+        return berryBountiful;
+    }
+
+    public void SetBerryBountiful(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("Berry harvests are bountiful. Doubled your harvests.");
+        }
+        berryBountiful = b;
+    }
+
+    public bool BerrySword()
+    {
+        return berrySword;
+    }
+
+    public void SetBerrySword(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("Thorned Sword is available to craft. See your crafting bench.");
+        }
+        berrySword = b;
+    }
+
+    public bool BerrySword2()
+    {
+        return berrySword2;
+    }
+
+    public void SetBerrySword2(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("Thorned Sword II is available to craft. See your crafting bench.");
+        }
+        berrySword2 = b;
+    }
+
+    public bool PotatoEnabled()
+    {
+        return potatoEnabled;
+    }
+
+    public void SetPotatoEnabled(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("Potatoes are now farmable. Go find them!");
+        }
+        potatoEnabled = b;
+    }
+
+    public bool PotatoSpeed()
+    {
+        return potatoSpeed;
+    }
+
+    public void SetPotatoSpeed(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("Potato growth rate doubled.");
+        }
+        potatoSpeed = b;
+    }
+
+    public bool PotatoBountiful()
+    {
+        return potatoBountiful;
+    }
+
+    public void SetPotatoBountiful(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("Potato harvests are bountiful. Doubled your harvests.");
+        }
+        potatoBountiful = b;
+    }
+
+    public bool PotatoGun()
+    {
+        return potatoGun;
+    }
+
+    public void SetPotatoGun(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("RPotatoG is available to craft. See your crafting bench.");
+        }
+        potatoGun = b;
+    }
+
+    public bool PotatoGun2()
+    {
+        return potatoGun2;
+    }
+
+    public void SetPotatoGun2(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("RPotatoG II is available to craft. See your crafting bench.");
+        }
+        potatoGun2 = b;
+    }
+
+    public bool CornEnabled()
+    {
+        return cornEnabled;
+    }
+
+    public void SetCornEnabled(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("Corn is now farmable. Go find them!");
+        }
+        cornEnabled = b;
+    }
+
+    public bool CornSpeed()
+    {
+        return cornSpeed;
+    }
+
+    public void SetCornSpeed(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("Corn growth rate doubled.");
+        }
+        cornSpeed = b;
+    }
+
+    public bool CornBountiful()
+    {
+        return cornBountiful;
+    }
+
+    public void SetCornBountiful(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("Corn harvests are bountiful. Doubled your harvests.");
+        }
+        cornBountiful = b;
+    }
+
+    public bool CornGun()
+    {
+        return cornGun;
+    }
+
+    public void SetCornGun(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("Corn Shooter is available to craft. See your crafting bench.");
+        }
+        cornGun = b;
+    }
+
+    public bool CornGun2()
+    {
+        return cornGun2;
+    }
+
+    public void SetCornGun2(bool b)
+    {
+        if (b == true)
+        {
+            GuiHint("Corn Shooter II is available to craft. See your crafting bench.");
+        }
+        cornGun2 = b;
     }
 }

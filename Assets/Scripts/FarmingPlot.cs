@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,9 @@ public class FarmingPlot : MonoBehaviour
     private bool stage1 = false;
     private bool stage2 = false;
     private bool stage3 = false;
+
+    private bool speedApplied = false;
+    private bool bountifulApplied = false;
 
     private void Awake()
     {
@@ -67,6 +71,70 @@ public class FarmingPlot : MonoBehaviour
 
     public void PlantCrop()
     {
+        GameController gc = GameController.Instance;
+        if (gameObject.name.Contains("corn"))
+        {
+            if (gc.CornSpeed() == true && speedApplied == false)
+            {
+                growDuration = growDuration / 2;
+                speedApplied = true;
+            }
+        }
+
+        if (gameObject.name.Contains("corn"))
+        {
+            if (gc.CornBountiful() == true && bountifulApplied == false)
+            {
+                for (int i = 0; i < quantities.Length; i++)
+                {
+                    quantities[i] = quantities[i] * 2;
+                }
+                bountifulApplied = true;
+            }
+        }
+
+        if (gameObject.name.Contains("potato"))
+        {
+            if (gc.PotatoSpeed() == true && speedApplied == false)
+            {
+                growDuration = growDuration / 2;
+                speedApplied = true;
+            }
+        }
+
+        if (gameObject.name.Contains("potato"))
+        {
+            if (gc.PotatoBountiful() == true && bountifulApplied == false)
+            {
+                for (int i = 0; i < quantities.Length; i++)
+                {
+                    quantities[i] = quantities[i] * 2;
+                }
+                bountifulApplied = true;
+            }
+        }
+
+        if (gameObject.name.Contains("berry"))
+        {
+            if (gc.BerrySpeed() == true && speedApplied == false)
+            {
+                growDuration = growDuration / 2;
+                speedApplied = true;
+            }
+        }
+
+        if (gameObject.name.Contains("berry"))
+        {
+            if (gc.BerryBountiful() == true && bountifulApplied == false)
+            {
+                for (int i = 0; i < quantities.Length; i++)
+                {
+                    quantities[i] = quantities[i] * 2;
+                }
+                bountifulApplied = true;
+            }
+        }
+        growTimer = growDuration;
         planted = true;
         animator.SetFloat("GrowStage", 1);
     }
