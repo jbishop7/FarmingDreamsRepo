@@ -62,7 +62,7 @@ public class GameController : MonoBehaviour
 
     public GameObject restrictedPrefab;
 
-    private int dayCounter = 0;
+    private int dayCounter = 1;
 
     private string tool1 = "axe";
     private string tool2 = "axe";  // will update this as we go, default to axe.
@@ -92,6 +92,10 @@ public class GameController : MonoBehaviour
 
     private bool dungeonRewardsAvailable = false;
     private string dungeonRewards = "";
+
+    private bool paused = false;
+
+    private bool firstDay = true;
 
     private static GameController _instance;
 
@@ -136,9 +140,20 @@ public class GameController : MonoBehaviour
 
     public void InitializeGameController()
     {
+        paused = false;
         if (currentScene == "farm")
         {
-            dayCounter++;
+
+            if (!firstDay)
+            {
+                Debug.Log("it isn't the first day.");
+                dayCounter++;
+            }
+            else
+            {
+                Debug.Log("it is the first day.");
+            }
+            
             inventoryPanel = null;
             journalPanel = null;
             craftingPanel = null;
@@ -254,6 +269,7 @@ public class GameController : MonoBehaviour
             if (showingJournal)
             {
                 ShowJournal();
+                paused = true;
             }
             else
             {
@@ -265,12 +281,14 @@ public class GameController : MonoBehaviour
             {
                 TechManager tm = TechManager.Instance;
                 tm.ShowTechTree();
+                paused = true;
             }
 
             if (Input.GetKeyDown(KeyCode.K))
             {
                 TechMenu techMenu = TechMenu.Instance;
                 techMenu.ShowCurrentTech();
+                paused = true;
             }
 
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -283,27 +301,19 @@ public class GameController : MonoBehaviour
                 }
             }
 
-
-            /*if (showingCrafting)
-            {
-                craftingPanel.SetActive(true);
-                Crafting c = Crafting.Instance;
-                c.ShowBuilding();
-            }
-            else
-            {
-                craftingPanel.SetActive(false);
-                Time.timeScale = 1f;
-            } */
-
             if (Input.GetKeyDown(KeyCode.I))
             {
                 showingInventory = !showingInventory;
+                if (showingInventory == false)
+                {
+                    paused = false;
+                }
             }
 
             if (showingInventory)
             {
                 ShowInventory();
+                paused = true;
             }
             else
             {
@@ -340,7 +350,28 @@ public class GameController : MonoBehaviour
             }
         }
 
+        if (paused == false && Input.GetKeyDown(KeyCode.Escape))
+        {
+            PauseController pc = PauseController.Instance;
+            pc.Pause();
+            paused = true;
+        }
 
+        if (paused == true && Input.GetKeyDown(KeyCode.Escape))
+        {
+            paused = false;
+        }
+
+        if (paused)
+        {
+            Time.timeScale = 0f;
+        }
+
+    }
+
+    public void SetPaused(bool p)
+    {
+        paused = p;
     }
 
     public void ShowJournal()
@@ -674,30 +705,22 @@ public class GameController : MonoBehaviour
     // END OF CRAFTING METHODS
     public void EndDay()
     {
+        firstDay = false;
         if (playerFellAsleep)
         {
             playerFellAsleep = false;
             Time.timeScale = 1f;
             Debug.Log("We fell asleep. Now we must fight with nothing good.");
             SaveStructures();
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(2);
             return;
         }
+        playerFellAsleep = false;
         dungeonRewards = "";
         dungeonRewardsAvailable = false;
         SaveStructures();
-        SceneManager.LoadScene(1);
-         /* if (CheckToolInventory("bamboo_sword")) // TODO get rid of this shit
-        {
-            Debug.Log("I want to end the day.");
-            SaveStructures();
-            SceneManager.LoadScene(1);
-        }
-        else
-        {
-            Debug.Log("I cannot end the day");
-        } */
-        playerFellAsleep = false;
+        SceneManager.LoadScene(2);
+        
 
     }
 
@@ -710,14 +733,18 @@ public class GameController : MonoBehaviour
     private void OnLevelWasLoaded(int level)
     {
         Time.timeScale = 1f;
-        if (level == 1)
+        if (level == 2)
         {
             currentScene = "dungeon";
         }
-        else
+        if (level == 1)
         {
             currentScene = "farm";
             SpawnStructures();
+        }
+        if (level == 0)
+        {
+            Destroy(this.gameObject);
         }
         InitializeGameController();
     }
@@ -1082,14 +1109,14 @@ public class GameController : MonoBehaviour
         playerGold += 25;
         dungeonRewardsAvailable = true;
         dungeonRewards = "Rewarded:\n1 Dream Ingot, 10 wood, 25 gold, 1 Tech Point";
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 
     public void DungeonFail()
     {
         Debug.Log("Great failure in the dungeon");
         UpdateToolsInUse("axe", "axe");
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 
     public int GetTechPoints()

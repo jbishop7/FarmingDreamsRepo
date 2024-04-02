@@ -151,6 +151,8 @@ public class Player : MonoBehaviour
         if (craftingBench != null && Input.GetKeyDown(KeyCode.E))
         {
             Crafting c = Crafting.Instance;
+            GameController gc = GameController.Instance;
+            gc.SetPaused(true);
             c.ShowCrafting();
             SetHint("");
         }
@@ -160,12 +162,16 @@ public class Player : MonoBehaviour
             SetHint("");
             Preparation p = Preparation.Instance;
             p.ShowPreparations();
+            GameController gc = GameController.Instance;
+            gc.SetPaused(true);
             /*GameController gc = GameController.Instance;
             gc.EndDay();*/
         }
 
         if (merchant != null && Input.GetKeyDown(KeyCode.E))
         {
+            GameController gc = GameController.Instance;
+            gc.SetPaused(true);
             merchant.ShowTrades();
             SetHint("");
         }
