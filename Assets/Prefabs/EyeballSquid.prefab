@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4967948486402197295}
   - component: {fileID: 33192320476392158}
   - component: {fileID: 2227713704442595586}
-  - component: {fileID: 119641064126403800}
   - component: {fileID: 4216596284793986992}
   m_Layer: 0
   m_Name: EyeballSquid
@@ -108,24 +107,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &119641064126403800
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8766382975993567453}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b47166c71b5eeed4cbbaefc282ec10df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 2
-  rb: {fileID: 4216596284793986992}
-  anim: {fileID: 2227713704442595586}
-  maxHealth: 15
-  attackDamage: 1
-  range: 1.75
 --- !u!50 &4216596284793986992
 Rigidbody2D:
   serializedVersion: 4
