@@ -181,7 +181,6 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-
     Vector3Int GetSpawnLocationAwayFromPlayer()
     {
         const int maxAttempts = 100;
@@ -200,6 +199,7 @@ public class MapGenerator : MonoBehaviour
         }
         return new Vector3Int(0, 0, 0);
     }
+
 
 }
 

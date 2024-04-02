@@ -11,11 +11,16 @@ public class Player : MonoBehaviour
     public Animator animator;
     private Vector2 movement;
     private float speed = 5f;
+    [SerializeField] float health, maxHealth = 10f;
+    [SerializeField] FloatingHealthbar healthbar;
+
+    private SpriteRenderer playerSprite;
 
     private Vector2 mousePosition = new Vector3(0, 0);
     private Vector2 toolToMouseVector = new Vector3(0, 0, 0);
 
     public GameObject tool; // this is the tool parent, holds all tools. 
+    private GameObject AttackArea;
     private Animator toolAnimator;
 
     private Tool tool1 = null;
@@ -24,6 +29,8 @@ public class Player : MonoBehaviour
 
     // private float toolUseTimer = 0.5f;
     private bool usingTool = false;
+    private bool attacking = false;
+    private bool isInvulnerable = false;
 
     private CraftingBench craftingBench = null;
 
@@ -35,6 +42,8 @@ public class Player : MonoBehaviour
     private RepairableStructure currentRepair = null;
 
     private Merchant merchant = null;
+
+    private GameController gameController = null;
 
     public TextMeshProUGUI playerHints;
 
@@ -89,13 +98,19 @@ public class Player : MonoBehaviour
             }
         }
         tool2.gameObject.SetActive(false);
+
+        playerSprite = GetComponent<SpriteRenderer>();
         tool1.gameObject.SetActive(true);
-        
     }
 
     void Start()
     {
-        
+        AttackArea = GameObject.Find("AttackArea");
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        AttackArea.SetActive(attacking);
+
+        health = maxHealth;
+        healthbar.updateHealthbar(health, maxHealth);
     }
 
     // Update is called once per frame
@@ -103,6 +118,8 @@ public class Player : MonoBehaviour
     {
         movement.x = Input.GetAxis("Horizontal");
         movement.y = Input.GetAxis("Vertical");
+
+        RotateAttackArea();
 
         animator.SetFloat("horizontal", movement.x);
         animator.SetFloat("vertical", movement.y);
@@ -156,6 +173,7 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             UseTool();
+            Attack();
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -300,6 +318,67 @@ public class Player : MonoBehaviour
 
         trb.rotation = angle;
 
+    }
+
+    private void Attack()
+    {
+        if (!attacking)
+        {
+            StartCoroutine(PerformAttack()); 
+        }
+    }
+
+    private IEnumerator PerformAttack()
+    {
+        attacking = true;
+        AttackArea.SetActive(true);
+
+        yield return new WaitForSeconds(0.5f);
+
+        attacking = false;
+        AttackArea.SetActive(false);
+    }
+
+    private void RotateAttackArea()
+    {
+        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 attackAreaToMouseVector = mousePosition - new Vector2(transform.position.x, transform.position.y);
+        float angle = Mathf.Atan2(attackAreaToMouseVector.y, attackAreaToMouseVector.x) * Mathf.Rad2Deg;
+        AttackArea.transform.rotation = Quaternion.Euler(0, 0, angle);
+    }
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        Debug.Log("I took damage: " + damage);
+        healthbar.updateHealthbar(health, maxHealth);
+
+        if(!isInvulnerable)
+        {
+            if (health <= 0)
+            {
+                gameController.DungeonFail();
+                //Load farm scene?
+            }
+            else
+            {
+                StartCoroutine(BecomeInvulnerable());
+            }
+        }
+        
+    }
+
+    private IEnumerator BecomeInvulnerable()
+    {
+        isInvulnerable = true;
+        float invulnerabilityDuration = 0.5f;
+        for (float i = 0; i < invulnerabilityDuration; i += 0.1f)
+        {
+            playerSprite.enabled = !playerSprite.enabled;
+            yield return new WaitForSeconds(0.1f);
+        }
+        playerSprite.enabled = true;
+        isInvulnerable = false;
     }
 
     private void UseTool()
