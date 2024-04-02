@@ -15,8 +15,8 @@ public class GameController : MonoBehaviour
     private int playerGold = 50;
 
     private TextMeshProUGUI inventoryAdditions;
-    private readonly float invAdditionTimer = 3f;
-    private float timer = 3f;
+    private readonly float invAdditionTimer = 4f;
+    private float timer = 4f;
     private bool startTimer = false;
 
     private GameObject journalPanel;
@@ -89,6 +89,9 @@ public class GameController : MonoBehaviour
     private bool cornSpeed = false;
     private bool cornGun = false;
     private bool cornGun2 = false;
+
+    private bool dungeonRewardsAvailable = false;
+    private string dungeonRewards = "";
 
     private static GameController _instance;
 
@@ -190,10 +193,16 @@ public class GameController : MonoBehaviour
             craftingPanel.SetActive(false);
             journalPanel.SetActive(false);
             playerFellAsleep = false;
+
+            buff1 = "";
+            buff2 = "";
+
         }
         else
         {
             // Debug.Log("We are NOT on the farm.");
+            // check for buffs
+            Debug.Log($"{buff1}, {buff2}");
         }
     }
 
@@ -206,6 +215,11 @@ public class GameController : MonoBehaviour
             moneyText.SetText($"{playerGold}");
             techPointsText.SetText($"{techPoints}");
 
+            if (dungeonRewardsAvailable)
+            {
+                GuiHint(dungeonRewards);
+                dungeonRewardsAvailable = false;
+            }
 
             if (startTimer)
             {
@@ -350,6 +364,7 @@ public class GameController : MonoBehaviour
         journalPanel.SetActive(true);
 
     }
+
     public void ShowInventory()
     {
         string tools = "";
@@ -495,6 +510,10 @@ public class GameController : MonoBehaviour
             if (playerTools.ContainsKey(items[i]))
             {
                 playerTools[items[i]] -= quantities[i];
+                if (playerTools[items[i]] < 1)
+                {
+                    playerTools.Remove(items[i]);
+                }
             }
             if (playerInventory.ContainsKey(items[i]))
             {
@@ -504,6 +523,7 @@ public class GameController : MonoBehaviour
 
         return true;
     }
+
     public int GetInventoryItemCount(string item)
     {
         if (playerInventory.ContainsKey(item))
@@ -650,8 +670,11 @@ public class GameController : MonoBehaviour
             SceneManager.LoadScene(1);
             return;
         }
-
-        if (CheckToolInventory("bamboo_sword")) // TODO get rid of this shit
+        dungeonRewards = "";
+        dungeonRewardsAvailable = false;
+        SaveStructures();
+        SceneManager.LoadScene(1);
+         /* if (CheckToolInventory("bamboo_sword")) // TODO get rid of this shit
         {
             Debug.Log("I want to end the day.");
             SaveStructures();
@@ -660,7 +683,7 @@ public class GameController : MonoBehaviour
         else
         {
             Debug.Log("I cannot end the day");
-        }
+        } */
         playerFellAsleep = false;
 
     }
@@ -1044,6 +1067,8 @@ public class GameController : MonoBehaviour
         AddToInventory("dream_ingot", 1);
         AddToInventory("wood", 10); // for example...
         playerGold += 25;
+        dungeonRewardsAvailable = true;
+        dungeonRewards = "Rewarded:\n1 Dream Ingot, 10 wood, 25 gold, 1 Tech Point";
         SceneManager.LoadScene(0);
     }
 
@@ -1063,6 +1088,7 @@ public class GameController : MonoBehaviour
     {
         techPoints -= cost;
     }
+
     public bool BerryEnabled()
     {
         return berryEnabled;

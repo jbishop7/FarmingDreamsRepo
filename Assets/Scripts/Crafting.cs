@@ -272,6 +272,25 @@ public class Crafting : MonoBehaviour
 
     private void BuildTool()
     {
+
+        // check if we already have this tool
+        Dictionary<string, int> playerTools = gc.GetPlayerTools();
+
+        bool hasTool = false;
+        foreach(var(key, val) in playerTools)
+        {
+            if (toolToBuild == key)
+            { 
+                hasTool = true;
+            }
+        }
+
+        if (hasTool)
+        {
+            gc.GuiHint("You already have this tool.");
+            return;
+        }
+
         // gotta check that we have all the materials. 
         List<string> items = new();
         List<int> quantities = new();

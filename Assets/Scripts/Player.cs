@@ -67,7 +67,7 @@ public class Player : MonoBehaviour
         // so we need to grab them, run them through a switch, and identify which tools to use. 
         string firstTool = toolsInUse[0];
         string secondTool = toolsInUse[1];
-        Debug.Log($"{firstTool} {secondTool}");
+        
         Tool[] tools = tool.GetComponentsInChildren<Tool>();
 
         foreach (var item in tools) // first disable ALL tools.
@@ -77,13 +77,11 @@ public class Player : MonoBehaviour
 
         foreach (var item in tools) // set the first tool
         {
-           // Debug.Log($"item: {item.gameObject.name} firstTool: {firstTool} secondTool: {secondTool}");
             if (item.gameObject.name == firstTool)
             {
                 tool1 = item;
                 toolAnimator = tool1.gameObject.GetComponent<Animator>();
                 currentTool = item;
-                tool1.gameObject.SetActive(true);
             }
 
             if (item.gameObject.name == secondTool){

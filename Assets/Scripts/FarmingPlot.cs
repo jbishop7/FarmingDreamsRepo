@@ -33,6 +33,43 @@ public class FarmingPlot : MonoBehaviour
         {
             planted = true;
             growTimer = 0;
+
+            if (gameObject.name.Contains("corn"))
+            {
+                if (gc.CornBountiful() == true && bountifulApplied == false)
+                {
+                    for (int i = 0; i < quantities.Length; i++)
+                    {
+                        quantities[i] = quantities[i] * 2;
+                    }
+                    bountifulApplied = true;
+                }
+            }
+
+            if (gameObject.name.Contains("potato"))
+            {
+                if (gc.PotatoBountiful() == true && bountifulApplied == false)
+                {
+                    for (int i = 0; i < quantities.Length; i++)
+                    {
+                        quantities[i] = quantities[i] * 2;
+                    }
+                    bountifulApplied = true;
+                }
+            }
+
+            if (gameObject.name.Contains("berry"))
+            {
+                if (gc.BerryBountiful() == true && bountifulApplied == false)
+                {
+                    for (int i = 0; i < quantities.Length; i++)
+                    {
+                        quantities[i] = quantities[i] * 2;
+                    }
+                    bountifulApplied = true;
+                }
+            }
+
         }
     }
 

@@ -112,7 +112,7 @@ public class Preparation : MonoBehaviour
         buff2Dropdown.ClearOptions();
 
         List<string> buffs = new();
-        buffs.Add("none");
+        playerBuffs.Add("none", 1);
         foreach(var(key, val) in playerBuffs)
         {
             buffs.Add(key);
@@ -171,7 +171,7 @@ public class Preparation : MonoBehaviour
             }
             i++;
         }
-        item1Text.SetText($"Tool 1: {tool1}");
+        buff1Text.SetText($"Buff 1: {buff1}");
     }
 
     private void UpdateBuff2(int change)
@@ -185,7 +185,7 @@ public class Preparation : MonoBehaviour
             }
             i++;
         }
-        item1Text.SetText($"Tool 1: {tool1}");
+        buff2Text.SetText($"Buff 2: {buff2}");
     }
 
     private void Advance()

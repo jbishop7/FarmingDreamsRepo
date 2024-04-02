@@ -52,12 +52,11 @@ public class Merchant : MonoBehaviour
         buying.Add("blackberry", 6);
 
         selling.Add("wood", 8);
-        selling.Add("axe_upgrade", 200);
         selling.Add("ingot", 100);
         selling.Add("berry_aid", 80);
         selling.Add("resist", 150);
         selling.Add("speed_slurp", 150);
-        selling.Add("dream_ingot", 600);
+        selling.Add("dream_ingot", 1500);
 
         sellDropdown.onValueChanged.AddListener(delegate
         {
