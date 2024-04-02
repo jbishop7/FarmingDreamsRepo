@@ -23,6 +23,7 @@ public class Merchant : MonoBehaviour
 
     public Button sellButton;
     public Button buyButton;
+    public Button sell5Button;
 
     private string itemToSell = "";
     private int sellPrice = 0;
@@ -51,9 +52,11 @@ public class Merchant : MonoBehaviour
         buying.Add("blackberry", 6);
 
         selling.Add("wood", 8);
-        selling.Add("axe_upgrade", 200);
-        selling.Add("berry_aid", 80);
         selling.Add("ingot", 100);
+        selling.Add("berry_aid", 80);
+        selling.Add("resist", 150);
+        selling.Add("speed_slurp", 150);
+        selling.Add("dream_ingot", 1500);
 
         sellDropdown.onValueChanged.AddListener(delegate
         {
@@ -73,6 +76,11 @@ public class Merchant : MonoBehaviour
         buyDropdown.onValueChanged.AddListener(delegate
         {
             UpdateBuyOffer(buyDropdown.value);
+        });
+
+        sell5Button.onClick.AddListener(delegate
+        {
+            Sell5Item();
         });
 
     }
@@ -153,6 +161,14 @@ public class Merchant : MonoBehaviour
     {
         GameController gc = GameController.Instance;
         gc.SellItem(itemToSell, sellPrice);
+        UpdateSellText(itemToSell, sellPrice);
+        UpdateBuyText(itemToBuy, buyPrice);
+    }
+
+    private void Sell5Item()
+    {
+        GameController gc = GameController.Instance;
+        gc.Sell5Item(itemToSell, sellPrice);
         UpdateSellText(itemToSell, sellPrice);
         UpdateBuyText(itemToBuy, buyPrice);
     }
