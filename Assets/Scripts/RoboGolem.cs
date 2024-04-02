@@ -11,12 +11,16 @@ public class RoboGolem : MonoBehaviour
     public float moveSpeed = 5.0f;
     public Animator _Animator;
     public Rigidbody2D _Rigidbody;
+    public Player player;
+
+    private Coroutine DamageCoroutine;
 
     [SerializeField] float health, maxHealth = 5f;
     [SerializeField] FloatingHealthbar healthbar;
 
     void Start()
     {
+        player = GameObject.Find("Player").GetComponent<Player>();
         GameObject groundGameObject = GameObject.Find("Ground");
         if (groundGameObject != null)
         {
@@ -102,5 +106,37 @@ public class RoboGolem : MonoBehaviour
     public void Die()
     {
         Destroy(gameObject);
+    }
+
+    private IEnumerator DamagePlayerOverTime(int damage, float interval)
+    {
+        while (true)
+        {
+            player.TakeDamage(damage);
+            yield return new WaitForSeconds(interval);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            if (DamageCoroutine != null)
+            {
+                StopCoroutine(DamageCoroutine);
+                DamageCoroutine = null;
+            }
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Player"))
+        {
+            if(DamageCoroutine == null)
+            {
+                DamageCoroutine = StartCoroutine(DamagePlayerOverTime(1, 1f));
+            }
+        }
     }
 }

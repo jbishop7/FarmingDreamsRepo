@@ -904,4 +904,13 @@ public class GameController : MonoBehaviour
         return dayCounter;
     }
 
+    public void DungeonFail()
+    {
+        Debug.Log("you dead");
+    }
+
+    public void DungeonSucceed()
+    {
+
+    }
 }

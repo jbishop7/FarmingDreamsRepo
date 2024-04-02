@@ -1,5 +1,86 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3239365975800836758
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6978253760502359930}
+  - component: {fileID: 326517782237848887}
+  - component: {fileID: 4329091288600008167}
+  m_Layer: 0
+  m_Name: InitiationRange
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6978253760502359930
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3239365975800836758}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4967948486402197295}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &326517782237848887
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3239365975800836758}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0.5}
+  serializedVersion: 2
+  m_Radius: 7
+--- !u!114 &4329091288600008167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3239365975800836758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 948c70a87026e32419513989d38fe4d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EyeballSquid: {fileID: 0}
 --- !u!1 &4223869582546548361
 GameObject:
   m_ObjectHideFlags: 0
@@ -11,7 +92,7 @@ GameObject:
   - component: {fileID: 1078637589880397048}
   - component: {fileID: 1871645335257772492}
   - component: {fileID: 4369921598095808630}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Healthbar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,6 +187,7 @@ MonoBehaviour:
   camera: {fileID: 0}
   target: {fileID: 4967948486402197295}
   offset: {x: 0, y: 1, z: 0}
+  player: 0
 --- !u!1 &4359100641447794522
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,7 +197,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6902568469480868424}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,7 +235,7 @@ GameObject:
   - component: {fileID: 2773527701712713842}
   - component: {fileID: 7914395321875756676}
   - component: {fileID: 2754100439566725727}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -228,7 +310,7 @@ GameObject:
   - component: {fileID: 8454939894203020414}
   - component: {fileID: 4811594049131255216}
   - component: {fileID: 3390407537960532010}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -275,7 +357,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.2509804, b: 0.2509804, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -304,7 +386,7 @@ GameObject:
   - component: {fileID: 4732711579293094105}
   - component: {fileID: 1471551730020507683}
   - component: {fileID: 6248922706100765249}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -407,7 +489,7 @@ GameObject:
   - component: {fileID: 2227713704442595586}
   - component: {fileID: 119641064126403800}
   - component: {fileID: 4216596284793986992}
-  - component: {fileID: 1657327506602161318}
+  - component: {fileID: 6286333015486913646}
   - component: {fileID: 1516829218787529965}
   m_Layer: 0
   m_Name: EyeballSquid
@@ -430,6 +512,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4745993195520930087}
+  - {fileID: 6978253760502359930}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &33192320476392158
@@ -550,8 +633,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!58 &1657327506602161318
-CircleCollider2D:
+--- !u!70 &6286333015486913646
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -582,9 +665,9 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.5}
-  serializedVersion: 2
-  m_Radius: 7
+  m_Offset: {x: -0.06, y: 0.5}
+  m_Size: {x: 0.94, y: 1.15}
+  m_Direction: 0
 --- !u!114 &1516829218787529965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -602,6 +685,7 @@ MonoBehaviour:
   _Rigidbody: {fileID: 0}
   moveSpeed: 5
   attackRange: 2.5
+  player: {fileID: 0}
   health: 0
   maxHealth: 5
   healthbar: {fileID: 0}

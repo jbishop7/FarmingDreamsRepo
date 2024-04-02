@@ -210,6 +210,7 @@ MonoBehaviour:
   moveSpeed: 3
   _Animator: {fileID: 0}
   _Rigidbody: {fileID: 0}
+  player: {fileID: 0}
   health: 0
   maxHealth: 5
   healthbar: {fileID: 0}
@@ -538,7 +539,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.25, b: 0.25, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -661,3 +662,4 @@ MonoBehaviour:
   camera: {fileID: 0}
   target: {fileID: 4140344810919728015}
   offset: {x: 0, y: 1.5, z: 0}
+  player: 0

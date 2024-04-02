@@ -11,7 +11,9 @@ public class EyeballSquid : MonoBehaviour
     private bool shouldPhase = false;
     private bool attackPlayer = false;
     public float attackRange = 2.5f;
+    public Player player;
 
+    private Coroutine DamageCoroutine;
     [SerializeField] float health, maxHealth = 5f;
     [SerializeField] FloatingHealthbar healthbar;
 
@@ -25,6 +27,7 @@ public class EyeballSquid : MonoBehaviour
         _Animator = GetComponent<Animator>();
         _Rigidbody = GetComponent<Rigidbody2D>();
         healthbar = GetComponentInChildren<FloatingHealthbar>();
+        player = GameObject.Find("Player").GetComponent<Player>();
 
         health = maxHealth;
         healthbar.updateHealthbar(health, maxHealth);
@@ -44,6 +47,9 @@ public class EyeballSquid : MonoBehaviour
                 Debug.Log("Player entered attack range");
                 attackPlayer = true;
                 _Animator.SetTrigger("attack");
+                player.TakeDamage(3);
+
+
             }
         }
         else
@@ -57,31 +63,13 @@ public class EyeballSquid : MonoBehaviour
         }
     }
 
-    private void Phase()
+    public void Phase()
     {
         Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
         _Animator.SetFloat("speed", moveSpeed);
         _Animator.SetFloat("horizontal", directionToPlayer.x);
         _Animator.SetFloat("vertical", directionToPlayer.y);
         _Rigidbody.MovePosition(_Rigidbody.position + new Vector2(directionToPlayer.x, directionToPlayer.y) * (moveSpeed * Time.fixedDeltaTime));
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            Debug.Log("Player detected for phasing/movement");
-            shouldPhase = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            Debug.Log("Player out of phasing/movement range");
-            shouldPhase = false;
-        }
     }
 
     public void TakeDamage(float damage, float knockbackDistance, Vector3 AttackPos)
@@ -101,9 +89,46 @@ public class EyeballSquid : MonoBehaviour
         }
     }
 
+    public void SetPhase(bool phase)
+    {
+        shouldPhase = phase;
+    }
+
     public void Die()
     {
         Destroy(gameObject);
     }
+
+    //private IEnumerator DamagePlayerOverTime(int damage, float interval)
+    //{
+    //    while (true)
+    //    {
+    //        player.TakeDamage(damage);
+    //        yield return new WaitForSeconds(interval);
+    //    }
+    //}
+
+    //private void OnTriggerExit2D(Collider2D collision)
+    //{
+    //    if (collision.CompareTag("Player"))
+    //    {
+    //        if (DamageCoroutine != null)
+    //        {
+    //            StopCoroutine(DamageCoroutine);
+    //            DamageCoroutine = null;
+    //        }
+    //    }
+    //}
+
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.CompareTag("Player"))
+    //    {
+    //        if (DamageCoroutine == null)
+    //        {
+    //            DamageCoroutine = StartCoroutine(DamagePlayerOverTime(1, 1f));
+    //        }
+    //    }
+    //}
 }
 
