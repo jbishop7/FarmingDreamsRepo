@@ -126,14 +126,6 @@ public class GameController : MonoBehaviour
             DontDestroyOnLoad(gameObject); // not doing this yet...
             CreateInitialStructures();
             playerTools.Add("axe", 1);
-            playerInventory.Add("wood", 2000);
-            playerInventory.Add("bamboo", 100);
-            playerInventory.Add("corn_husk", 200);
-            playerInventory.Add("corn", 200);
-            playerInventory.Add("ingot", 10);
-            playerInventory.Add("dream_ingot", 15);
-            playerInventory.Add("speed_slurp", 10);
-            playerInventory.Add("resist", 10);
         }
     }
     void Start()
