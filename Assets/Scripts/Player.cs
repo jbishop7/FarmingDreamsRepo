@@ -14,6 +14,9 @@ public class Player : MonoBehaviour
     private float speed = 5f;
     [SerializeField] float health, maxHealth = 10f;
     [SerializeField] FloatingHealthbar healthbar;
+    [SerializeField] GameObject cornPrefab;
+    [SerializeField] GameObject potatoPrefab;
+
 
     private SpriteRenderer playerSprite;
 
@@ -27,6 +30,9 @@ public class Player : MonoBehaviour
     private Tool tool1 = null;
     private Tool tool2 = null;
     private Tool currentTool = null;
+
+    private Tool test;
+
 
     // private float toolUseTimer = 0.5f;
     private bool usingTool = false;
@@ -49,6 +55,7 @@ public class Player : MonoBehaviour
     public TextMeshProUGUI playerHints;
 
     private static Player _instance;
+    private float nextFireTime = 0f;
 
     public static Player Instance
     {
@@ -80,6 +87,7 @@ public class Player : MonoBehaviour
         string secondTool = toolsInUse[1];
         
         Tool[] tools = tool.GetComponentsInChildren<Tool>();
+        test = Tool.Instance;
 
         foreach (var item in tools) // first disable ALL tools.
         {
@@ -113,10 +121,11 @@ public class Player : MonoBehaviour
         }
         
         gameController = GameController.Instance;
-        AttackArea.SetActive(attacking);
 
+        AttackArea.SetActive(attacking);
         health = maxHealth;
         healthbar.updateHealthbar(health, maxHealth);
+            
     }
 
     // Update is called once per frame
@@ -125,10 +134,7 @@ public class Player : MonoBehaviour
         movement.x = Input.GetAxis("Horizontal");
         movement.y = Input.GetAxis("Vertical");
 
-        if(gameController.GetLevelType() == "dungeon")
-        {
-            RotateAttackArea();
-        }
+        RotateAttackArea();
         
 
         animator.SetFloat("horizontal", movement.x);
@@ -183,7 +189,9 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             UseTool();
+            Debug.Log("Attacking..");
             Attack();
+            
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -332,13 +340,51 @@ public class Player : MonoBehaviour
 
     private void Attack()
     {
-        if (!attacking)
+        Debug.Log(currentTool.type);
+        Debug.Log(currentTool.name);
+        if (currentTool.type == "rpg" || currentTool.type == "gun")
         {
-            StartCoroutine(PerformAttack()); 
+
+            if (Time.time >= nextFireTime)
+            {
+                GameObject bulletPrefab = null;
+
+                switch (currentTool.type)
+                {
+                    case "gun":
+                        Debug.Log("case gun");
+                        bulletPrefab = cornPrefab;
+                        nextFireTime = Time.time + 0.25f;
+                        break;
+                    case "rpg":
+                        Debug.Log("case rpg");
+                        bulletPrefab = potatoPrefab;
+                        nextFireTime = Time.time + 1.5f;
+                        break;
+                }
+
+                if (bulletPrefab != null)
+                {
+                    Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    Vector2 firingDirection = mousePosition - new Vector2(transform.position.x, transform.position.y);
+
+                    GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.LookRotation(Vector3.forward, firingDirection));
+                    Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+
+                    if (rb != null)
+                    {
+                        rb.velocity = firingDirection.normalized * (currentTool.type == "rpg" ? 5f : 10f); // Adjust speed based on type
+                    }
+                }
+            }
+        }
+        else if (!attacking)
+        {
+            StartCoroutine(PerformMeleeAttack());
         }
     }
 
-    private IEnumerator PerformAttack()
+    private IEnumerator PerformMeleeAttack()
     {
         attacking = true;
         AttackArea.SetActive(true);
@@ -359,16 +405,11 @@ public class Player : MonoBehaviour
             AttackArea.transform.rotation = Quaternion.Euler(0, 0, angle);
             tool.transform.rotation = Quaternion.Euler(0, 0, angle);
         }
-        else
-        {
-            Debug.Log("Attack area is null");
-        }
     }
 
     public void TakeDamage(float damage)
     {
         health -= damage;
-        Debug.Log("I took damage: " + damage);
         healthbar.updateHealthbar(health, maxHealth);
 
         if(!isInvulnerable)

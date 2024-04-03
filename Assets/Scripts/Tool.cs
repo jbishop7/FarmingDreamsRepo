@@ -8,7 +8,28 @@ public class Tool : MonoBehaviour
     public float damage;
     public string type;
     Player player;
-    
+
+    private static Tool _instance;
+
+    public static Tool Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError("No game controller");
+            }
+            return _instance;
+        }
+    }
+
+    private void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+        }
+    }
 
     void Start()
     {
@@ -16,20 +37,11 @@ public class Tool : MonoBehaviour
     }
 
 
-    void Update()
-    {
-
-    }
-
     public float GetDamage()
     {
         return damage;
     }
 
-    public string GetDamageType()
-    {
-        return type;
-    }
 
     public void PlayerDoneUse()
     {

@@ -16,7 +16,7 @@ TagManager:
   - Sword
   - NPC
   - Tree
-  - AttackRange
+  - Wall
   layers:
   - Default
   - TransparentFX
@@ -24,8 +24,8 @@ TagManager:
   - 
   - Water
   - UI
-  - EnemyBody
-  - InitiationRange
+  - 
+  - 
   - 
   - 
   - 

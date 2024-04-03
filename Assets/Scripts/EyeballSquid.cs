@@ -89,7 +89,7 @@ public class EyeballSquid : MonoBehaviour
         }
     }
 
-    public void TakeDamage(float damage, float knockbackDistance, Vector3 AttackPos)
+    public void TakeDamage(float damage, float knockbackDistance, Vector3 AttackPos, string type)
     {
         health -= damage;
         healthbar.updateHealthbar(health, maxHealth);
@@ -98,7 +98,7 @@ public class EyeballSquid : MonoBehaviour
         {
             Die();
         }
-        else
+        else if (type != "gun")
         {
             Vector3 knockbackDir = transform.position - AttackPos;
             knockbackDir = knockbackDir.normalized * knockbackDistance;

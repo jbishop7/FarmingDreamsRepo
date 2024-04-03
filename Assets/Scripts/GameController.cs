@@ -69,7 +69,7 @@ public class GameController : MonoBehaviour
     private string buff1 = "";  // speed_slurp, or resist   
     private string buff2 = "";  
 
-    private int techPoints = 9; // use these for the tech tree.
+    private int techPoints = 1000; // use these for the tech tree.
 
     // a ridiculous amount of bools for the tech tree
     private bool berryEnabled = false;
@@ -121,7 +121,7 @@ public class GameController : MonoBehaviour
             playerTools.Add("axe", 1);
             playerInventory.Add("wood", 2000);
             playerInventory.Add("bamboo", 100);
-            playerInventory.Add("ingot", 1);
+            playerInventory.Add("ingot", 10);
         }
     }
     void Start()

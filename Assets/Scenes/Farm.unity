@@ -10051,7 +10051,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 8
-  type: gun
+  type: rpg
 --- !u!95 &503954394
 Animator:
   serializedVersion: 5
@@ -34240,7 +34240,10 @@ MonoBehaviour:
   health: 0
   maxHealth: 10
   healthbar: {fileID: 0}
+  cornPrefab: {fileID: 2071165372394843253, guid: 2299a0d291dfe3b4e935bff3ae141f48, type: 3}
+  potatoPrefab: {fileID: 438113972098553011, guid: d6a2a511106546242bea66494bbc1c4f, type: 3}
   tool: {fileID: 1631898268}
+  AttackArea: {fileID: 0}
   playerHints: {fileID: 1378558656}
 --- !u!61 &1888513306
 BoxCollider2D:
@@ -35474,7 +35477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 15
-  type: gun
+  type: rpg
 --- !u!95 &1960124484
 Animator:
   serializedVersion: 5

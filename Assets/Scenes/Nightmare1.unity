@@ -1230,6 +1230,7 @@ MonoBehaviour:
   walkableTile: {fileID: 11400000, guid: bc36a558ecd1f67429fa48604d4bcca2, type: 2}
   walkableTileWithGrass: {fileID: 11400000, guid: 4fe7246f6f91fdc408ca9323683f04d6, type: 2}
   boundaryTile: {fileID: 11400000, guid: 926b88a2ab63e1641888e4c99d3fc9bf, type: 2}
+  Text: {fileID: 2003369705}
   player: {fileID: 1888513300}
   mapWidth: 35
   mapHeight: 35
@@ -1239,6 +1240,7 @@ MonoBehaviour:
   numberOfRooms: 10
   _RoboGolem: {fileID: 5536789930514786862, guid: 7bba9257eb32652478ddd283a174476f, type: 3}
   _Eyeball: {fileID: 8766382975993567453, guid: 8c8d9314716217643af58a73377ac349, type: 3}
+  _Boss: {fileID: 5540909058694222847, guid: 7a93aad8b5caec940ae95044c2735f75, type: 3}
   minSpawnDistanceFromPlayer: 10
 --- !u!1 &600616690
 GameObject:
@@ -1827,7 +1829,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 8
-  type: gun
+  type: rpg
 --- !u!95 &860907808
 Animator:
   serializedVersion: 5
@@ -3224,7 +3226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 15
-  type: gun
+  type: rpg
 --- !u!95 &1798349430
 Animator:
   serializedVersion: 5
@@ -3626,9 +3628,12 @@ MonoBehaviour:
   rb: {fileID: 1888513304}
   animator: {fileID: 1888513301}
   health: 0
-  maxHealth: 10
+  maxHealth: 1000
   healthbar: {fileID: 311407931}
+  cornPrefab: {fileID: 0}
+  potatoPrefab: {fileID: 0}
   tool: {fileID: 426944356}
+  AttackArea: {fileID: 2092342732}
   playerHints: {fileID: 1644288824}
 --- !u!61 &1888513306
 BoxCollider2D:
@@ -4116,7 +4121,7 @@ GameObject:
   - component: {fileID: 2003369706}
   - component: {fileID: 2003369705}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: EnemyCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4161,7 +4166,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Enemies remaining: 10000'
+  m_text: 'Enemies remaining: '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5268,7 +5273,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2092342733
 Transform:
   m_ObjectHideFlags: 0

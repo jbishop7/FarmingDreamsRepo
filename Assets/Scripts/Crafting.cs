@@ -132,42 +132,53 @@ public class Crafting : MonoBehaviour
        if (gc.CornGun() == true)
         {
             // corn shooter
-            cornShooterCosts.Add("wood", 5);
-            cornShooterCosts.Add("corn", 30);
-            cornShooterCosts.Add("corn_husk", 5);
-            cornShooterCosts.Add("ingot", 1);
+            //cornShooterCosts.Add("wood", 5);
+            //cornShooterCosts.Add("corn", 30);
+            //cornShooterCosts.Add("corn_husk", 5);
+            //cornShooterCosts.Add("ingot", 1);
+            //craftableTools.Add("corn_shooter");
+            cornShooterCosts.Add("wood", 1);
             craftableTools.Add("corn_shooter");
         }
 
        if (gc.CornGun2() == true)
         {
             // corn shooter II
-            cornShooterIICosts.Add("wood", 5);
-            cornShooterIICosts.Add("corn", 50);
-            cornShooterIICosts.Add("corn_husk", 20);
-            cornShooterIICosts.Add("dream_ingot", 2);
-            cornShooterIICosts.Add("corn_shooter", 1);
+            //cornShooterIICosts.Add("wood", 5);
+            //cornShooterIICosts.Add("corn", 50);
+            //cornShooterIICosts.Add("corn_husk", 20);
+            //cornShooterIICosts.Add("dream_ingot", 2);
+            //cornShooterIICosts.Add("corn_shooter", 1);
+            //craftableTools.Add("corn_shooter_II");
+
+            cornShooterIICosts.Add("wood", 1);
             craftableTools.Add("corn_shooter_II");
         }
         
        if (gc.PotatoGun() == true)
         {
             // RPotatoG
-            RPotatoGCosts.Add("wood", 5);
-            RPotatoGCosts.Add("potato_flower", 10);
-            RPotatoGCosts.Add("potato", 15);
-            RPotatoGCosts.Add("ingot", 1);
+            //RPotatoGCosts.Add("wood", 5);
+            //RPotatoGCosts.Add("potato_flower", 10);
+            //RPotatoGCosts.Add("potato", 15);
+            //RPotatoGCosts.Add("ingot", 1);
+            //craftableTools.Add("RPotatoG");
+
+            RPotatoGCosts.Add("wood", 1);
             craftableTools.Add("RPotatoG");
         }
         
         if (gc.PotatoGun2() == true)
         {
             //RPotatoG_II
-            RPotatoGIICosts.Add("wood", 5);
-            RPotatoGIICosts.Add("potato_flower", 20);
-            RPotatoGIICosts.Add("potato", 25);
-            RPotatoGIICosts.Add("dream_ingot", 2);
-            RPotatoGIICosts.Add("RPotatoG", 1);
+            //RPotatoGIICosts.Add("wood", 5);
+            //RPotatoGIICosts.Add("potato_flower", 20);
+            //RPotatoGIICosts.Add("potato", 25);
+            //RPotatoGIICosts.Add("dream_ingot", 2);
+            //RPotatoGIICosts.Add("RPotatoG", 1);
+            //craftableTools.Add("RPotatoG_II");
+
+            RPotatoGIICosts.Add("wood", 1);
             craftableTools.Add("RPotatoG_II");
         }
         // ALL WEAPONS ARE DONE NOW.

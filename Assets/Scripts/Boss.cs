@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections;
 
-public class RoboGolem : MonoBehaviour
+public class Boss : MonoBehaviour
 {
     public Transform playerTransform;
     public Tilemap walkableTilemap;
@@ -91,12 +91,12 @@ public class RoboGolem : MonoBehaviour
         health -= damage;
         healthbar.updateHealthbar(health, maxHealth);
 
-        if(health <= 0)
+        if (health <= 0)
         {
             Die();
         }
-        else 
-        { 
+        else
+        {
             Vector3 knockbackDir = transform.position - AttackPos;
             knockbackDir = knockbackDir.normalized * knockbackDistance;
             transform.position += knockbackDir;
@@ -131,9 +131,9 @@ public class RoboGolem : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Player"))
+        if (collision.CompareTag("Player"))
         {
-            if(DamageCoroutine == null)
+            if (DamageCoroutine == null)
             {
                 DamageCoroutine = StartCoroutine(DamagePlayerOverTime(1, 1f));
             }

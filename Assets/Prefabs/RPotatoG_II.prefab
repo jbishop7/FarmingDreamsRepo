@@ -121,7 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 15
-  type: gun
+  type: rpg
 --- !u!60 &6051999712261962710
 PolygonCollider2D:
   m_ObjectHideFlags: 0

@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using TMPro;
+using UnityEngine.XR;
 
 public class DungeonController : MonoBehaviour
 {
@@ -10,7 +12,8 @@ public class DungeonController : MonoBehaviour
     public Tile walkableTile;
     public Tile walkableTileWithGrass;
     public Tile boundaryTile;
-    
+
+    [SerializeField] public TMP_Text Text;
     public GameObject player;
 
     public int mapWidth = 50; 
@@ -27,6 +30,8 @@ public class DungeonController : MonoBehaviour
     public GameObject _Boss;
 
     public int minSpawnDistanceFromPlayer = 10;
+
+    private GameController gameController;
 
     private List<Vector3Int> roomCenters;
     private List<Vector3Int> occupiedSpawnLocations = new List<Vector3Int>();
@@ -49,18 +54,36 @@ public class DungeonController : MonoBehaviour
 
     void Start()
     {
+        gameController = GameController.Instance;
+
         GenerateDungeon();
         SpawnEnemy(_Eyeball, 1);
-        SpawnEnemy(_RoboGolem, 2);
+        SpawnEnemy(_RoboGolem, 4);
+    }
+
+    private void Update()
+    {
+        updateEnemyCount();
     }
 
     public void SpawnEnemies(int eyes, int robos, int boss)
     {
         SpawnEnemy(_Eyeball, eyes);
-        //SpawnEnemy(_RoboGolem, robos);
-        // SpawnEnemy(_Boss, boss);
+        SpawnEnemy(_RoboGolem, robos);
+        SpawnEnemy(_Boss, boss);
     }
 
+    private void updateEnemyCount()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+        Text.text = "Enemies remaining: " + enemies.Length;
+
+        if (enemies.Length == 0)
+        {
+            gameController.DungeonSuccess();
+        }
+    }
 
     void GenerateDungeon()
     {
