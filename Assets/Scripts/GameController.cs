@@ -123,9 +123,9 @@ public class GameController : MonoBehaviour
             DontDestroyOnLoad(gameObject); // not doing this yet...
             CreateInitialStructures();
             playerTools.Add("axe", 1);
-            playerInventory.Add("wood", 2000);
+            /*playerInventory.Add("wood", 2000);
             playerInventory.Add("bamboo", 100);
-            playerInventory.Add("ingot", 1);
+            playerInventory.Add("ingot", 1);*/
         }
     }
     void Start()
@@ -222,8 +222,36 @@ public class GameController : MonoBehaviour
             switch (dayCounter)
             {
                 case 1:
-                    dc.SpawnEnemies(1, 4, 0);
+                    dc.SpawnEnemies(0, 3, 0);
                     break;
+                case 2:
+                    dc.SpawnEnemies(0, 5, 0);
+                    break;
+                case 3:
+                    dc.SpawnEnemies(1, 3, 0);
+                    break;
+                case 4:
+                    dc.SpawnEnemies(1, 5, 0);
+                    break;
+                case 5:
+                    dc.SpawnEnemies(1, 7, 0);
+                    break;
+                case 6:
+                    dc.SpawnEnemies(2, 5, 0);
+                    break;
+                case 7:
+                    dc.SpawnEnemies(4, 2, 0);
+                    break;
+                case 8:
+                    dc.SpawnEnemies(3, 5, 0);
+                    break;
+                case 9:
+                    dc.SpawnEnemies(3, 8, 0);
+                    break;
+                case 10:
+                    dc.SpawnEnemies(3, 2, 1);
+                    break;
+
             }
             
         }
@@ -1103,12 +1131,59 @@ public class GameController : MonoBehaviour
         Debug.Log("Great success in the dungeon");
         UpdateToolsInUse("axe", "axe"); // they should be back on the farm, don't need a sword.
         // and then give rewards
-        techPoints++;
-        AddToInventory("dream_ingot", 1);
-        AddToInventory("wood", 10); // for example...
-        playerGold += 25;
+        techPoints++;   // minimum 1 tech point
+        switch (dayCounter)
+        {
+            case 1:
+            case 2:
+                AddToInventory("bamboo", 10);
+                AddToInventory("wood", 10);
+                AddToInventory("berry_aid", 2);
+                AddToInventory("resist", 1);
+                playerGold += 25;
+                dungeonRewards = "Rewarded:\n10 bamboo, 10 wood, 2 berry aid, 1 resist, 25 gold, 1 Tech Point";
+                break;
+            case 3:
+            case 4:
+                AddToInventory("dream_ingot", 1);
+                AddToInventory("ingot", 1);
+                AddToInventory("bamboo", 20);
+                AddToInventory("wood", 5);
+                AddToInventory("speed_slurp", 2);
+                AddToInventory("berry_aid", 1);
+                playerGold += 30;
+                dungeonRewards = "Rewarded:\n1 Dream Ingot, 1 Ingot, 20 bamboo, 5 wood, 2 speed slurp, 1 berry aid, 30 gold, 1 Tech Point";
+                break;
+            case 5:
+            case 6:
+                techPoints++;
+                AddToInventory("dream_ingot", 1);
+                AddToInventory("blackberry", 10);
+                AddToInventory("corn", 10);
+                AddToInventory("potato", 10);
+                AddToInventory("resist", 2);
+                AddToInventory("berry_aid", 1);
+                playerGold += 35;
+                dungeonRewards = "Rewarded:\n1 Dream Ingot, 10 blackberry, 10 corn, 10 potato, 2 resist, 1 berry aid, 35 gold, 2 Tech Point";
+                break;
+            case 7:
+            case 8:
+            case 9:
+                techPoints++;
+                AddToInventory("dream_ingot", 2);
+                AddToInventory("resist", 1);
+                AddToInventory("berry_aid", 5);
+                AddToInventory("speed_slurp", 1);
+                playerGold += 40;
+                dungeonRewards = "Rewarded:\n2 Dream Ingot, 1 resist, 5 berry aid, 1 speed slurp, 40 gold, 2 Tech Point";
+                break;
+            case 10:
+                Debug.Log("Sweet victory!");
+                SceneManager.LoadScene(4);
+                break;
+        }
+        
         dungeonRewardsAvailable = true;
-        dungeonRewards = "Rewarded:\n1 Dream Ingot, 10 wood, 25 gold, 1 Tech Point";
         SceneManager.LoadScene(1);
     }
 
@@ -1116,6 +1191,49 @@ public class GameController : MonoBehaviour
     {
         Debug.Log("Great failure in the dungeon");
         UpdateToolsInUse("axe", "axe");
+        switch (dayCounter)
+        {
+            case 1:
+            case 2:
+                AddToInventory("bamboo", 5);
+                AddToInventory("wood", 5);
+                AddToInventory("berry_aid", 1);
+                dungeonRewards = "Failed. Half Rewarded:\n5 bamboo, 5 wood, 1 berry aid";
+                break;
+            case 3:
+            case 4:
+                AddToInventory("bamboo", 10);
+                AddToInventory("wood", 2);
+                AddToInventory("berry_aid", 1);
+                dungeonRewards = "Failed. Half Rewarded:\n10 bamboo, 2 wood, 1 berry aid";
+                break;
+            case 5:
+            case 6:
+                techPoints++;
+                AddToInventory("blackberry", 5);
+                AddToInventory("corn", 5);
+                AddToInventory("potato", 5);
+                AddToInventory("resist", 1);
+                AddToInventory("berry_aid", 1);
+                dungeonRewards = "Failed. Half Rewarded:\n5 blackberry, 5 corn, 5 potato, 1 resist, 1 berry aid, 1 Tech Point";
+                break;
+            case 7:
+            case 8:
+            case 9:
+                techPoints++;
+                AddToInventory("ingot", 1);
+                AddToInventory("resist", 1);
+                AddToInventory("berry_aid", 1);
+                AddToInventory("speed_slurp", 1);
+                dungeonRewards = "Failed. Half Rewarded:\n1 Ingot, 1 resist, 5 berry aid, 1 speed slurp, 1 Tech Point";
+                break;
+            case 10:
+                Debug.Log("Sweet defeat..");
+                SceneManager.LoadScene(3);
+                break;
+        }
+
+        dungeonRewardsAvailable = true;
         SceneManager.LoadScene(1);
     }
 
