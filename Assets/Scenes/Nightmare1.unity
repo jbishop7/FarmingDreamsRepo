@@ -3630,8 +3630,8 @@ MonoBehaviour:
   health: 0
   maxHealth: 1000
   healthbar: {fileID: 311407931}
-  cornPrefab: {fileID: 0}
-  potatoPrefab: {fileID: 0}
+  cornPrefab: {fileID: 2071165372394843253, guid: 2299a0d291dfe3b4e935bff3ae141f48, type: 3}
+  potatoPrefab: {fileID: 438113972098553011, guid: d6a2a511106546242bea66494bbc1c4f, type: 3}
   tool: {fileID: 426944356}
   AttackArea: {fileID: 2092342732}
   playerHints: {fileID: 1644288824}

@@ -9,18 +9,15 @@ public class ProjectileBehavior : MonoBehaviour
 
     private void Start()
     {
-        player = Player.Instance;
-        Debug.Log("Projectile spawned");
+        player = GameObject.FindWithTag("Player").GetComponent<Player>();
+        tool = player.CurrentTool();
+        if (tool == null)
+        {
+            Debug.LogError("Tool is not assigned to the ProjectileBehavior.");
+            Destroy(gameObject); // Destroy bullet if no tool is associated
+        }
     }
-    //private void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    if (collision.gameObject.tag == "Wall")
-    //    {
-    //        Debug.Log("wall hit 2");
-    //        Destroy(gameObject);
-    //    }
-    //}
-
+    
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Enemy")
@@ -49,11 +46,6 @@ public class ProjectileBehavior : MonoBehaviour
             }
             Destroy(gameObject);
         }
-        //if (collision.gameObject.tag == "Wall")
-        //{
-        //    Debug.Log("wall hit");
-        //    Destroy(gameObject);
-        //}
     }
 }
 
