@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -11,11 +12,16 @@ public class Player : MonoBehaviour
     public Animator animator;
     private Vector2 movement;
     private float speed = 5f;
+    [SerializeField] float health, maxHealth = 10f;
+    [SerializeField] FloatingHealthbar healthbar;
+
+    private SpriteRenderer playerSprite;
 
     private Vector2 mousePosition = new Vector3(0, 0);
     private Vector2 toolToMouseVector = new Vector3(0, 0, 0);
 
     public GameObject tool; // this is the tool parent, holds all tools. 
+    private GameObject AttackArea;
     private Animator toolAnimator;
 
     private Tool tool1 = null;
@@ -24,6 +30,8 @@ public class Player : MonoBehaviour
 
     // private float toolUseTimer = 0.5f;
     private bool usingTool = false;
+    private bool attacking = false;
+    private bool isInvulnerable = false;
 
     private CraftingBench craftingBench = null;
 
@@ -35,6 +43,8 @@ public class Player : MonoBehaviour
     private RepairableStructure currentRepair = null;
 
     private Merchant merchant = null;
+
+    private GameController gameController;
 
     public TextMeshProUGUI playerHints;
 
@@ -59,28 +69,50 @@ public class Player : MonoBehaviour
             _instance = this;
         }
         playerHints.SetText("");
+
+        // Get the tools in use here...
+        GameController gc = GameController.Instance;
+        gameController = gc;
+        string[] toolsInUse = gc.GetToolsInUse();
+        // there is just going to be 2 tools in use. 
+        // so we need to grab them, run them through a switch, and identify which tools to use. 
+        string firstTool = toolsInUse[0];
+        string secondTool = toolsInUse[1];
+        
         Tool[] tools = tool.GetComponentsInChildren<Tool>();
-        foreach (var item in tools)
+
+        foreach (var item in tools) // first disable ALL tools.
         {
-            if (item.gameObject.name == "axe")
+            item.gameObject.SetActive(false);
+        }
+
+        foreach (var item in tools) // set the first tool
+        {
+            if (item.gameObject.name == firstTool)
             {
                 tool1 = item;
                 toolAnimator = tool1.gameObject.GetComponent<Animator>();
                 currentTool = item;
             }
-            if (item.gameObject.name == "bamboo_sword")
-            {
+
+            if (item.gameObject.name == secondTool){
                 tool2 = item;
             }
         }
-
         tool2.gameObject.SetActive(false);
-        
+
+        playerSprite = GetComponent<SpriteRenderer>();
+        tool1.gameObject.SetActive(true);
     }
 
     void Start()
     {
-        
+        //AttackArea = GameObject.Find("AttackArea");
+        gameController = GameController.Instance;
+        // AttackArea.SetActive(attacking);
+
+        health = maxHealth;
+        // healthbar.updateHealthbar(health, maxHealth);
     }
 
     // Update is called once per frame
@@ -88,6 +120,8 @@ public class Player : MonoBehaviour
     {
         movement.x = Input.GetAxis("Horizontal");
         movement.y = Input.GetAxis("Vertical");
+
+        RotateAttackArea();
 
         animator.SetFloat("horizontal", movement.x);
         animator.SetFloat("vertical", movement.y);
@@ -117,6 +151,8 @@ public class Player : MonoBehaviour
         if (craftingBench != null && Input.GetKeyDown(KeyCode.E))
         {
             Crafting c = Crafting.Instance;
+            GameController gc = GameController.Instance;
+            gc.SetPaused(true);
             c.ShowCrafting();
             SetHint("");
         }
@@ -124,12 +160,18 @@ public class Player : MonoBehaviour
         if (tent != null && Input.GetKeyDown(KeyCode.E))
         {
             SetHint("");
+            Preparation p = Preparation.Instance;
+            p.ShowPreparations();
             GameController gc = GameController.Instance;
-            gc.EndDay();
+            gc.SetPaused(true);
+            /*GameController gc = GameController.Instance;
+            gc.EndDay();*/
         }
 
         if (merchant != null && Input.GetKeyDown(KeyCode.E))
         {
+            GameController gc = GameController.Instance;
+            gc.SetPaused(true);
             merchant.ShowTrades();
             SetHint("");
         }
@@ -139,6 +181,7 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             UseTool();
+            Attack();
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -150,15 +193,10 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            GameController gc = GameController.Instance;
-            if (gc.CheckToolInventory("bamboo_sword"))
-            {
-                toolAnimator = tool2.gameObject.GetComponent<Animator>();
-                tool2.gameObject.SetActive(true);
-                tool1.gameObject.SetActive(false);
-                currentTool = tool2;
-            }
-           
+            toolAnimator = tool2.gameObject.GetComponent<Animator>();
+            tool1.gameObject.SetActive(false);
+            tool2.gameObject.SetActive(true);
+            currentTool = tool2;
         }
 
     }
@@ -290,6 +328,68 @@ public class Player : MonoBehaviour
 
     }
 
+    private void Attack()
+    {
+        if (!attacking)
+        {
+            StartCoroutine(PerformAttack()); 
+        }
+    }
+
+    private IEnumerator PerformAttack()
+    {
+        attacking = true;
+        // AttackArea.SetActive(true);
+
+        yield return new WaitForSeconds(0.5f);
+
+        attacking = false;
+        // AttackArea.SetActive(false);
+    }
+
+    private void RotateAttackArea()
+    {
+        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 attackAreaToMouseVector = mousePosition - new Vector2(transform.position.x, transform.position.y);
+        float angle = Mathf.Atan2(attackAreaToMouseVector.y, attackAreaToMouseVector.x) * Mathf.Rad2Deg;
+        // AttackArea.transform.rotation = Quaternion.Euler(0, 0, angle);
+        tool.transform.rotation = Quaternion.Euler(0, 0, angle);
+    }
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        Debug.Log("I took damage: " + damage);
+        healthbar.updateHealthbar(health, maxHealth);
+
+        if(!isInvulnerable)
+        {
+            if (health <= 0)
+            {
+                gameController.DungeonFail();
+                //Load farm scene?
+            }
+            else
+            {
+                StartCoroutine(BecomeInvulnerable());
+            }
+        }
+        
+    }
+
+    private IEnumerator BecomeInvulnerable()
+    {
+        isInvulnerable = true;
+        float invulnerabilityDuration = 0.5f;
+        for (float i = 0; i < invulnerabilityDuration; i += 0.1f)
+        {
+            playerSprite.enabled = !playerSprite.enabled;
+            yield return new WaitForSeconds(0.1f);
+        }
+        playerSprite.enabled = true;
+        isInvulnerable = false;
+    }
+
     private void UseTool()
     {
         toolAnimator.SetTrigger("use");
@@ -314,5 +414,23 @@ public class Player : MonoBehaviour
     public Tool CurrentTool()
     {
         return currentTool;
+    }
+
+    public void HealPlayer(float healthAdded)
+    {
+        health += healthAdded;
+    }
+    private void HealPlayer()
+    {
+        if (gameController.GetLevelType() != "dungeon")
+        {
+            return;
+        }
+        if (gameController.UseInventoryItems("berry_aid", 1))
+        {
+            // heal the player
+            // update the health text 
+        }
+        // otherwise do nothing
     }
 }
