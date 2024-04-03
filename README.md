@@ -3,6 +3,7 @@
 ### rbishop7@uwo.ca 
 ### cchen842@uwo.ca
 
+The main branch is farm2-jacob, don't ask...
 
 # How to Play
 First things first, you need to download the repository. You can do this by clicking the green code button and downloading as a ZIP file. 
