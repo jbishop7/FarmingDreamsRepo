@@ -69,7 +69,7 @@ public class GameController : MonoBehaviour
     private string buff1 = "";  // speed_slurp, or resist   
     private string buff2 = "";  
 
-    private int techPoints = 9; // use these for the tech tree.
+    private int techPoints = 0; // use these for the tech tree.
 
     // a ridiculous amount of bools for the tech tree
     private bool berryEnabled = false;
@@ -97,6 +97,9 @@ public class GameController : MonoBehaviour
 
     private bool firstDay = true;
 
+    private bool winner = false;
+    private bool loser = false;
+
     private static GameController _instance;
 
     public static GameController Instance
@@ -123,9 +126,14 @@ public class GameController : MonoBehaviour
             DontDestroyOnLoad(gameObject); // not doing this yet...
             CreateInitialStructures();
             playerTools.Add("axe", 1);
-            /*playerInventory.Add("wood", 2000);
+            playerInventory.Add("wood", 2000);
             playerInventory.Add("bamboo", 100);
-            playerInventory.Add("ingot", 1);*/
+            playerInventory.Add("corn_husk", 200);
+            playerInventory.Add("corn", 200);
+            playerInventory.Add("ingot", 10);
+            playerInventory.Add("dream_ingot", 15);
+            playerInventory.Add("speed_slurp", 10);
+            playerInventory.Add("resist", 10);
         }
     }
     void Start()
@@ -214,45 +222,7 @@ public class GameController : MonoBehaviour
 
         }
         else
-        {
-            // Debug.Log("We are NOT on the farm.");
-            // check for buffs
-            Debug.Log($"{buff1}, {buff2}");
-            DungeonController dc = DungeonController.Instance;
-            switch (dayCounter)
-            {
-                case 1:
-                    dc.SpawnEnemies(0, 3, 0);
-                    break;
-                case 2:
-                    dc.SpawnEnemies(0, 5, 0);
-                    break;
-                case 3:
-                    dc.SpawnEnemies(1, 3, 0);
-                    break;
-                case 4:
-                    dc.SpawnEnemies(1, 5, 0);
-                    break;
-                case 5:
-                    dc.SpawnEnemies(1, 7, 0);
-                    break;
-                case 6:
-                    dc.SpawnEnemies(2, 5, 0);
-                    break;
-                case 7:
-                    dc.SpawnEnemies(4, 2, 0);
-                    break;
-                case 8:
-                    dc.SpawnEnemies(3, 5, 0);
-                    break;
-                case 9:
-                    dc.SpawnEnemies(3, 8, 0);
-                    break;
-                case 10:
-                    dc.SpawnEnemies(3, 2, 1);
-                    break;
-
-            }
+        {            
             
         }
     }
@@ -260,11 +230,17 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.N))
+        
+        if (winner)
         {
-            SceneManager.LoadScene(1);
-            currentScene = "dungeon";
+            SceneManager.LoadScene(4);
         }
+
+        if (loser)
+        {
+            SceneManager.LoadScene(3);
+        }
+
         if(currentScene == "farm")
         {
             calendarText.SetText(dayCounter.ToString());    // I hate that it has come to this but something bad is happening and this is the only fix
@@ -733,12 +709,17 @@ public class GameController : MonoBehaviour
     // END OF CRAFTING METHODS
     public void EndDay()
     {
+        if (playerTools.Count < 2)
+        {
+            GuiHint("You need to craft a weapon before entering the World of Nightmares.");
+            SetPaused(false);
+            return;
+        }
         firstDay = false;
         if (playerFellAsleep)
         {
             playerFellAsleep = false;
             Time.timeScale = 1f;
-            Debug.Log("We fell asleep. Now we must fight with nothing good.");
             SaveStructures();
             SceneManager.LoadScene(2);
             return;
@@ -770,7 +751,7 @@ public class GameController : MonoBehaviour
             currentScene = "farm";
             SpawnStructures();
         }
-        if (level == 0)
+        if (level == 0 || level == 3 || level == 4)
         {
             Destroy(this.gameObject);
         }
@@ -1126,6 +1107,12 @@ public class GameController : MonoBehaviour
         return toolsInUse;
     }
 
+    public string[] GetBuffsInUse()
+    {
+        string[] buffsInUse = { buff1, buff2 };
+        return buffsInUse;
+    }
+
     public void DungeonSuccess()
     {
         Debug.Log("Great success in the dungeon");
@@ -1179,7 +1166,8 @@ public class GameController : MonoBehaviour
                 break;
             case 10:
                 Debug.Log("Sweet victory!");
-                SceneManager.LoadScene(4);
+                //SceneManager.LoadScene(4);
+                winner = true;
                 break;
         }
         
@@ -1229,7 +1217,7 @@ public class GameController : MonoBehaviour
                 break;
             case 10:
                 Debug.Log("Sweet defeat..");
-                SceneManager.LoadScene(3);
+                loser = true;
                 break;
         }
 
@@ -1460,5 +1448,14 @@ public class GameController : MonoBehaviour
     public string GetLevelType()
     {
         return currentScene;
+    }
+
+    public int GetBerryAids()
+    {
+        if (playerInventory.ContainsKey("berry_aid"))
+        {
+            return playerInventory["berry_aid"];
+        }
+        return 0;
     }
 }

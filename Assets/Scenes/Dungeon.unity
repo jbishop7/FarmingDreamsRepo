@@ -1230,6 +1230,7 @@ MonoBehaviour:
   walkableTile: {fileID: 11400000, guid: bc36a558ecd1f67429fa48604d4bcca2, type: 2}
   walkableTileWithGrass: {fileID: 11400000, guid: 4fe7246f6f91fdc408ca9323683f04d6, type: 2}
   boundaryTile: {fileID: 11400000, guid: 926b88a2ab63e1641888e4c99d3fc9bf, type: 2}
+  Text: {fileID: 2003369705}
   player: {fileID: 1888513300}
   mapWidth: 35
   mapHeight: 35
@@ -1239,7 +1240,10 @@ MonoBehaviour:
   numberOfRooms: 10
   _RoboGolem: {fileID: 5536789930514786862, guid: 7bba9257eb32652478ddd283a174476f, type: 3}
   _Eyeball: {fileID: 8766382975993567453, guid: 8c8d9314716217643af58a73377ac349, type: 3}
-  _Boss: {fileID: 0}
+  _Boss: {fileID: 5540909058694222847, guid: 7a93aad8b5caec940ae95044c2735f75, type: 3}
+  resistPanel: {fileID: 1087421429}
+  speedPanel: {fileID: 1136983363}
+  flaskCount: {fileID: 73391321}
   minSpawnDistanceFromPlayer: 10
 --- !u!1 &600616690
 GameObject:
@@ -1375,112 +1379,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 600616690}
   m_CullTransparentMesh: 1
---- !u!1 &711864025
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 711864027}
-  - component: {fileID: 711864026}
-  - component: {fileID: 711864028}
-  m_Layer: 0
-  m_Name: Boss
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!212 &711864026
-SpriteRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 711864025}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 2
-  m_Sprite: {fileID: 92379265, guid: cc3df4db5bf0b584b9d653cc877a98f2, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
---- !u!4 &711864027
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 711864025}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.08, y: 1.06, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &711864028
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 711864025}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 8270cac669fb4e94ca42f8418edbec92, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &770515511
 GameObject:
   m_ObjectHideFlags: 0
@@ -1934,7 +1832,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 8
-  type: gun
+  type: rpg
 --- !u!95 &860907808
 Animator:
   serializedVersion: 5
@@ -3331,7 +3229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 15
-  type: gun
+  type: rpg
 --- !u!95 &1798349430
 Animator:
   serializedVersion: 5
@@ -3733,8 +3631,10 @@ MonoBehaviour:
   rb: {fileID: 1888513304}
   animator: {fileID: 1888513301}
   health: 0
-  maxHealth: 10
+  maxHealth: 50
   healthbar: {fileID: 311407931}
+  cornPrefab: {fileID: 2071165372394843253, guid: 2299a0d291dfe3b4e935bff3ae141f48, type: 3}
+  potatoPrefab: {fileID: 438113972098553011, guid: d6a2a511106546242bea66494bbc1c4f, type: 3}
   tool: {fileID: 426944356}
   playerHints: {fileID: 1644288824}
 --- !u!61 &1888513306
@@ -4223,7 +4123,7 @@ GameObject:
   - component: {fileID: 2003369706}
   - component: {fileID: 2003369705}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: EnemyCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4268,7 +4168,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Enemies remaining: 10000'
+  m_text: 'Enemies remaining: '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5558,4 +5458,3 @@ SceneRoots:
   - {fileID: 1996672022}
   - {fileID: 522237161}
   - {fileID: 317100143}
-  - {fileID: 711864027}

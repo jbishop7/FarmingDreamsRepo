@@ -7,7 +7,7 @@ public class SquidInk : MonoBehaviour
 
     private void Start()
     {
-        player = GameObject.Find("Player").GetComponent<Player>();            
+        player = Player.Instance;            
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -17,8 +17,8 @@ public class SquidInk : MonoBehaviour
         {
             Debug.Log("Player Has been shot");
             player.TakeDamage(3);
-
-            DestroyBullet();
+            Destroy(this);
+            // DestroyBullet();
         }
     }
 

@@ -664,6 +664,7 @@ MonoBehaviour:
   playerTransform: {fileID: 0}
   _Animator: {fileID: 0}
   _Rigidbody: {fileID: 0}
+  _Collider: {fileID: 0}
   moveSpeed: 5
   attackRange: 2.5
   bulletSpeed: 10
@@ -671,4 +672,4 @@ MonoBehaviour:
   bulletPrefab: {fileID: 8409621554132645696, guid: 6b20b186c7f98c54fb923d4f2447d880, type: 3}
   health: 0
   maxHealth: 5
-  healthbar: {fileID: 0}
+  healthbar: {fileID: 4369921598095808630}

@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
@@ -14,6 +15,10 @@ public class Player : MonoBehaviour
     private float speed = 5f;
     [SerializeField] float health, maxHealth = 10f;
     [SerializeField] FloatingHealthbar healthbar;
+    [SerializeField] GameObject cornPrefab;
+    [SerializeField] GameObject potatoPrefab;
+
+   
 
     private SpriteRenderer playerSprite;
 
@@ -32,6 +37,7 @@ public class Player : MonoBehaviour
     private bool usingTool = false;
     private bool attacking = false;
     private bool isInvulnerable = false;
+    private float nextFireTime = 0f;
 
     private CraftingBench craftingBench = null;
 
@@ -107,12 +113,34 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        //AttackArea = GameObject.Find("AttackArea");
+        if (AttackArea == null)
+        {
+            AttackArea = GameObject.Find("AttackArea");
+        }
         gameController = GameController.Instance;
-        // AttackArea.SetActive(attacking);
 
-        health = maxHealth;
-        // healthbar.updateHealthbar(health, maxHealth);
+        
+
+
+        if (gameController.GetLevelType() != "farm")
+        {
+            AttackArea.SetActive(attacking);
+            string[] activeBuffs = gameController.GetBuffsInUse();
+
+            if (activeBuffs[0] == "speed_slurp" || activeBuffs[1] == "speed_slurp")
+            {
+                speed = speed + 2f;
+            }
+
+            if (activeBuffs[0] == "resist" || activeBuffs[1] == "resist")
+            {
+                maxHealth = 1.5f * maxHealth;
+            }
+            health = maxHealth;
+            healthbar.updateHealthbar(health, maxHealth);
+        }
+
+        
     }
 
     // Update is called once per frame
@@ -181,7 +209,10 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             UseTool();
-            Attack();
+            if (gameController.GetLevelType() == "dungeon")
+            {
+                Attack();
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -197,6 +228,11 @@ public class Player : MonoBehaviour
             tool1.gameObject.SetActive(false);
             tool2.gameObject.SetActive(true);
             currentTool = tool2;
+        }
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            HealPlayer();
         }
 
     }
@@ -330,30 +366,68 @@ public class Player : MonoBehaviour
 
     private void Attack()
     {
-        if (!attacking)
+        if (currentTool.type == "rpg" || currentTool.type == "gun")
         {
-            StartCoroutine(PerformAttack()); 
+            if (Time.time >= nextFireTime)
+            {
+                GameObject bulletPrefab = null;
+
+                switch (currentTool.type)
+                {
+                    case "gun":
+                        Debug.Log("case gun");
+                        bulletPrefab = cornPrefab;
+                        nextFireTime = Time.time + 0.25f;
+                        break;
+                    case "rpg":
+                        Debug.Log("case rpg");
+                        bulletPrefab = potatoPrefab;
+                        nextFireTime = Time.time + 1.5f;
+                        break;
+                }
+
+                if (bulletPrefab != null)
+                {
+                    Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    Vector2 firingDirection = mousePosition - new Vector2(transform.position.x, transform.position.y);
+
+                    GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.LookRotation(Vector3.forward, firingDirection));
+                    Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+
+                    if (rb != null)
+                    {
+                        rb.velocity = firingDirection.normalized * (currentTool.type == "rpg" ? 5f : 10f); // Adjust speed based on type
+                    }
+                }
+            }
+        }
+        else if (!attacking)
+        {
+            StartCoroutine(PerformMeleeAttack());
         }
     }
 
-    private IEnumerator PerformAttack()
+    private IEnumerator PerformMeleeAttack()
     {
         attacking = true;
-        // AttackArea.SetActive(true);
+        AttackArea.SetActive(true);
 
         yield return new WaitForSeconds(0.5f);
 
         attacking = false;
-        // AttackArea.SetActive(false);
+        AttackArea.SetActive(false);
     }
 
     private void RotateAttackArea()
     {
-        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 attackAreaToMouseVector = mousePosition - new Vector2(transform.position.x, transform.position.y);
-        float angle = Mathf.Atan2(attackAreaToMouseVector.y, attackAreaToMouseVector.x) * Mathf.Rad2Deg;
-        // AttackArea.transform.rotation = Quaternion.Euler(0, 0, angle);
-        tool.transform.rotation = Quaternion.Euler(0, 0, angle);
+        if (AttackArea != null)
+        {
+            mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 attackAreaToMouseVector = mousePosition - new Vector2(transform.position.x, transform.position.y);
+            float angle = Mathf.Atan2(attackAreaToMouseVector.y, attackAreaToMouseVector.x) * Mathf.Rad2Deg;
+            AttackArea.transform.rotation = Quaternion.Euler(0, 0, angle);
+            tool.transform.rotation = Quaternion.Euler(0, 0, angle);
+        }
     }
 
     public void TakeDamage(float damage)
@@ -367,7 +441,6 @@ public class Player : MonoBehaviour
             if (health <= 0)
             {
                 gameController.DungeonFail();
-                //Load farm scene?
             }
             else
             {
@@ -424,12 +497,13 @@ public class Player : MonoBehaviour
     {
         if (gameController.GetLevelType() != "dungeon")
         {
+            Debug.Log("not in the dungeon, won't heal");
             return;
         }
         if (gameController.UseInventoryItems("berry_aid", 1))
         {
-            // heal the player
-            // update the health text 
+            HealPlayer(maxHealth / 5);
+            healthbar.updateHealthbar(health, maxHealth);
         }
         // otherwise do nothing
     }

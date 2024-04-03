@@ -23,6 +23,9 @@ When you want to run the game, you will need to accept the potential risk. I pro
 - X to heal in a dungeon (if you have berry aid!)
 - Esc to view the pause menu, and to dismiss any other UI. 
 
+## Dev Tooling
+- There is a case where enemies get stuck in walls in the Dungeon. If this happens, Press P to complete the dungeon. 
+
 
 ## Story
 You are a retired Dream Warrior, finally enjoying your retirement. Unlucky for you, the World of Nightmares is getting stronger, and it's your job to tear it down. 
@@ -63,3 +66,26 @@ If you beat all the enemies in the Nightmare World, you will receive an importan
 
 ## Failing a Dungeon
 That's okay. Not everyone is perfect. You don't get any rewards, and will wake up on the farm. 
+
+
+# Features Implemented
+### On the farm
+- NPC Trading
+- Repairing broken structures
+- Programmatically save and re-build the farm scene (tracking positions and building types to ensure players come back to the farm they left!)
+- Technology Points -> used to unlock new weapons, items, and farming perks!
+- Crafting System -> You can craft new items and weapons.
+- Breakable structures -> trees will despawn when destroyed. 
+- Inventory -> Track all your tools and items.
+- Journal -> Stuck? Press J! The journal will give you things to complete each day. 
+- Fully animated -> All characters have full movement animations. 
+- Complete UI -> Everything you would ever need to track is available on the UI. 
+- Day to Night -> Farming Dreams runs on a day-night cycle. Farm by day, fight by night!
+- Preparation -> Select your tools to take into the Nightmare World!
+
+### In the Nightmare World
+- Automated dungeon creation and enemy spawning
+- Unique enemies
+- Multiple weapon types implemented (sword, greatsword, gun, rpg)
+- Healing -> Press X to regain some health (if you have berry aid!)
+- Buffs -> Bring some buffs into the Dungeon to feel the effects while you fight!
