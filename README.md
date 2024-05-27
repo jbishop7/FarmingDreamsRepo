@@ -5,6 +5,8 @@
 
 The main branch is farm2-jacob, don't ask...
 
+*Since school has ended, other collaborators have been added to continue building Farming Dreams. Please contact rbishop7@uwo.ca if you have any scholarly concerns*
+
 # How to Play
 First things first, you need to download the repository. You can do this by clicking the green code button and downloading as a ZIP file. 
 
