@@ -2,20 +2,23 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using TMPro;
 
-public class MapGenerator : MonoBehaviour
+
+public class DungeonController : MonoBehaviour
 {
     public Tilemap walkableTilemap;
     public Tilemap boundaryTilemap;
     public Tile walkableTile;
     public Tile walkableTileWithGrass;
     public Tile boundaryTile;
-    
+
+    [SerializeField] public TMP_Text Text;
     public GameObject player;
 
-    public int mapWidth = 50; 
+    public int mapWidth = 50;
     public int mapHeight = 50;
-    public int minRoomSize = 2; 
+    public int minRoomSize = 2;
     public int maxRoomSize = 4;
     public int corridorWidth = 2;
     public int numberOfRooms = 10;
@@ -24,24 +27,125 @@ public class MapGenerator : MonoBehaviour
 
     public GameObject _RoboGolem;
     public GameObject _Eyeball;
+    public GameObject _Boss;
+
+    public GameObject resistPanel;
+    public GameObject speedPanel;
+
+    public TextMeshProUGUI flaskCount;
+
+
     public int minSpawnDistanceFromPlayer = 10;
+
+    private GameController gameController;
 
     private List<Vector3Int> roomCenters;
     private List<Vector3Int> occupiedSpawnLocations = new List<Vector3Int>();
     private List<Vector3> enemySpawnPoints = new List<Vector3>();
 
+    public static DungeonController _instance;
+
+    public static DungeonController Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
+
     private void Awake()
     {
-        
+        _instance = this;
     }
 
     void Start()
     {
+        gameController = GameController.Instance;
+
         GenerateDungeon();
-        SpawnEnemy(_Eyeball, 1);
-        SpawnEnemy(_RoboGolem, 2);
+
+       string[] buffs = gameController.GetBuffsInUse();
+
+
+        resistPanel.SetActive(false);
+        speedPanel.SetActive(false);
+
+
+        for(int i = 0; i < buffs.Length; i++)
+        {
+            if (buffs[i] == "speed_slurp")
+            {
+                speedPanel.SetActive(true);
+            }
+
+            if (buffs[i] == "resist")
+            {
+                resistPanel.SetActive(true);
+            }
+        }
+
+        switch (gameController.GetDayCount())
+        {
+            case 1:
+                SpawnEnemies(0, 3, 0, 1);
+                break;
+            case 2:
+                SpawnEnemies(0, 5, 0, 1);
+                break;
+            case 3:
+                SpawnEnemies(1, 3, 0, 2);
+                break;
+            case 4:
+                SpawnEnemies(1, 5, 0, 1);
+                break;
+            case 5:
+                SpawnEnemies(1, 7, 0, 1);
+                break;
+            case 6:
+                SpawnEnemies(2, 5, 0, 1);
+                break;
+            case 7:
+                SpawnEnemies(4, 2, 0, 2);
+                break;
+            case 8:
+                SpawnEnemies(3, 5, 0, 2);
+                break;
+            case 9:
+                SpawnEnemies(3, 8, 0, 2);
+                break;
+            case 10:
+                SpawnEnemies(3, 2, 1, 3);
+                break;
+
+        }
+        
     }
 
+    private void Update()
+    {
+        updateEnemyCount();
+        flaskCount.SetText($"{gameController.GetBerryAids()}");
+    }
+
+    public void SpawnEnemies(int eyes, int robos, int boss, int level)
+    {
+        
+        SpawnEnemy(_Eyeball, eyes, level);
+        SpawnEnemy(_RoboGolem, robos, level);
+        SpawnEnemy(_Boss, boss, level);
+    }
+
+    private void updateEnemyCount()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+        Text.text = "Enemies remaining: " + enemies.Length;
+
+        if (enemies.Length == 0)
+        {
+            gameController.DungeonSuccess();
+        }
+    }
 
     void GenerateDungeon()
     {
@@ -150,10 +254,12 @@ public class MapGenerator : MonoBehaviour
         player.transform.position = walkableTilemap.CellToWorld(playerSpawn);
     }
 
-    void SpawnEnemy(GameObject enemyPrefab, int numberOfEnemies)
+    void SpawnEnemy(GameObject enemyPrefab, int numberOfEnemies, int level)
     {
         int spawnAttempts = 0;
         int spawnCount = 0;
+
+        string enemyType = enemyPrefab.name;
 
         float minimumDistanceApart = 10f;
 
@@ -167,9 +273,28 @@ public class MapGenerator : MonoBehaviour
 
             if (!tooClose)
             {
-                Instantiate(enemyPrefab, worldLocation, Quaternion.identity);
+                GameObject g = Instantiate(enemyPrefab, worldLocation, Quaternion.identity);
+                
+                if (enemyType == "Boss")
+                {
+                    Boss b = g.GetComponent<Boss>();
+                    b.SetMaxHealth(150);
+                }
+
+                if(enemyType == "RoboGolem")
+                {
+                    RoboGolem r = g.GetComponent<RoboGolem>();
+                    r.SetMaxHealth(level * 15);
+                }
+
+                if (enemyType == "EyeballSquid")
+                {
+                    EyeballSquid e = g.GetComponent<EyeballSquid>();
+                    e.SetMaxHealth(10 * level);
+                }
                 enemySpawnPoints.Add(worldLocation);
                 spawnCount++;
+
             }
 
             spawnAttempts++;
@@ -180,7 +305,6 @@ public class MapGenerator : MonoBehaviour
             Debug.LogWarning("Could not find enough valid spawn points for enemies.");
         }
     }
-
 
     Vector3Int GetSpawnLocationAwayFromPlayer()
     {
@@ -200,6 +324,7 @@ public class MapGenerator : MonoBehaviour
         }
         return new Vector3Int(0, 0, 0);
     }
+
 
 }
 

@@ -124,7 +124,7 @@ public class Crafting : MonoBehaviour
             thornedSwordIICosts.Add("wood", 5);
             thornedSwordIICosts.Add("blackberry", 10);
             thornedSwordIICosts.Add("thorn", 20);
-            thornedSwordIICosts.Add("dream_ingot", 2);
+            thornedSwordIICosts.Add("dream_ingot", 4);
             thornedSwordIICosts.Add("thorned_sword", 1);
             craftableTools.Add("thorned_sword_II");
         }
@@ -145,7 +145,7 @@ public class Crafting : MonoBehaviour
             cornShooterIICosts.Add("wood", 5);
             cornShooterIICosts.Add("corn", 50);
             cornShooterIICosts.Add("corn_husk", 20);
-            cornShooterIICosts.Add("dream_ingot", 2);
+            cornShooterIICosts.Add("dream_ingot", 4);
             cornShooterIICosts.Add("corn_shooter", 1);
             craftableTools.Add("corn_shooter_II");
         }
@@ -166,7 +166,7 @@ public class Crafting : MonoBehaviour
             RPotatoGIICosts.Add("wood", 5);
             RPotatoGIICosts.Add("potato_flower", 20);
             RPotatoGIICosts.Add("potato", 25);
-            RPotatoGIICosts.Add("dream_ingot", 2);
+            RPotatoGIICosts.Add("dream_ingot", 4);
             RPotatoGIICosts.Add("RPotatoG", 1);
             craftableTools.Add("RPotatoG_II");
         }

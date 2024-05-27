@@ -62,14 +62,14 @@ public class GameController : MonoBehaviour
 
     public GameObject restrictedPrefab;
 
-    private int dayCounter = 0;
+    private int dayCounter = 1;
 
     private string tool1 = "axe";
     private string tool2 = "axe";  // will update this as we go, default to axe.
-    private string buff1 = "";
-    private string buff2 = "";
+    private string buff1 = "";  // speed_slurp, or resist   
+    private string buff2 = "";  
 
-    private int techPoints = 9; // use these for the tech tree.
+    private int techPoints = 0; // use these for the tech tree.
 
     // a ridiculous amount of bools for the tech tree
     private bool berryEnabled = false;
@@ -92,6 +92,13 @@ public class GameController : MonoBehaviour
 
     private bool dungeonRewardsAvailable = false;
     private string dungeonRewards = "";
+
+    private bool paused = false;
+
+    private bool firstDay = true;
+
+    private bool winner = false;
+    private bool loser = false;
 
     private static GameController _instance;
 
@@ -119,9 +126,6 @@ public class GameController : MonoBehaviour
             DontDestroyOnLoad(gameObject); // not doing this yet...
             CreateInitialStructures();
             playerTools.Add("axe", 1);
-            playerInventory.Add("wood", 2000);
-            playerInventory.Add("bamboo", 100);
-            playerInventory.Add("ingot", 1);
         }
     }
     void Start()
@@ -136,9 +140,20 @@ public class GameController : MonoBehaviour
 
     public void InitializeGameController()
     {
+        paused = false;
         if (currentScene == "farm")
         {
-            dayCounter++;
+
+            if (!firstDay)
+            {
+                Debug.Log("it isn't the first day.");
+                dayCounter++;
+            }
+            else
+            {
+                Debug.Log("it is the first day.");
+            }
+            
             inventoryPanel = null;
             journalPanel = null;
             craftingPanel = null;
@@ -199,16 +214,25 @@ public class GameController : MonoBehaviour
 
         }
         else
-        {
-            // Debug.Log("We are NOT on the farm.");
-            // check for buffs
-            Debug.Log($"{buff1}, {buff2}");
+        {            
+            
         }
     }
 
     // Update is called once per frame
     void Update()
     {
+        
+        if (winner)
+        {
+            SceneManager.LoadScene(4);
+        }
+
+        if (loser)
+        {
+            SceneManager.LoadScene(3);
+        }
+
         if(currentScene == "farm")
         {
             calendarText.SetText(dayCounter.ToString());    // I hate that it has come to this but something bad is happening and this is the only fix
@@ -241,6 +265,7 @@ public class GameController : MonoBehaviour
             if (showingJournal)
             {
                 ShowJournal();
+                paused = true;
             }
             else
             {
@@ -252,12 +277,14 @@ public class GameController : MonoBehaviour
             {
                 TechManager tm = TechManager.Instance;
                 tm.ShowTechTree();
+                paused = true;
             }
 
             if (Input.GetKeyDown(KeyCode.K))
             {
                 TechMenu techMenu = TechMenu.Instance;
                 techMenu.ShowCurrentTech();
+                paused = true;
             }
 
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -270,27 +297,19 @@ public class GameController : MonoBehaviour
                 }
             }
 
-
-            /*if (showingCrafting)
-            {
-                craftingPanel.SetActive(true);
-                Crafting c = Crafting.Instance;
-                c.ShowBuilding();
-            }
-            else
-            {
-                craftingPanel.SetActive(false);
-                Time.timeScale = 1f;
-            } */
-
             if (Input.GetKeyDown(KeyCode.I))
             {
                 showingInventory = !showingInventory;
+                if (showingInventory == false)
+                {
+                    paused = false;
+                }
             }
 
             if (showingInventory)
             {
                 ShowInventory();
+                paused = true;
             }
             else
             {
@@ -327,7 +346,28 @@ public class GameController : MonoBehaviour
             }
         }
 
+        if (paused == false && Input.GetKeyDown(KeyCode.Escape))
+        {
+            PauseController pc = PauseController.Instance;
+            pc.Pause();
+            paused = true;
+        }
 
+        if (paused == true && Input.GetKeyDown(KeyCode.Escape))
+        {
+            paused = false;
+        }
+
+        if (paused)
+        {
+            Time.timeScale = 0f;
+        }
+
+    }
+
+    public void SetPaused(bool p)
+    {
+        paused = p;
     }
 
     public void ShowJournal()
@@ -661,30 +701,27 @@ public class GameController : MonoBehaviour
     // END OF CRAFTING METHODS
     public void EndDay()
     {
+        if (playerTools.Count < 2)
+        {
+            GuiHint("You need to craft a weapon before entering the World of Nightmares.");
+            SetPaused(false);
+            return;
+        }
+        firstDay = false;
         if (playerFellAsleep)
         {
             playerFellAsleep = false;
             Time.timeScale = 1f;
-            Debug.Log("We fell asleep. Now we must fight with nothing good.");
             SaveStructures();
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(2);
             return;
         }
+        playerFellAsleep = false;
         dungeonRewards = "";
         dungeonRewardsAvailable = false;
         SaveStructures();
-        SceneManager.LoadScene(1);
-         /* if (CheckToolInventory("bamboo_sword")) // TODO get rid of this shit
-        {
-            Debug.Log("I want to end the day.");
-            SaveStructures();
-            SceneManager.LoadScene(1);
-        }
-        else
-        {
-            Debug.Log("I cannot end the day");
-        } */
-        playerFellAsleep = false;
+        SceneManager.LoadScene(2);
+        
 
     }
 
@@ -697,14 +734,18 @@ public class GameController : MonoBehaviour
     private void OnLevelWasLoaded(int level)
     {
         Time.timeScale = 1f;
-        if (level == 1)
+        if (level == 2)
         {
             currentScene = "dungeon";
         }
-        else
+        if (level == 1)
         {
             currentScene = "farm";
             SpawnStructures();
+        }
+        if (level == 0 || level == 3 || level == 4)
+        {
+            Destroy(this.gameObject);
         }
         InitializeGameController();
     }
@@ -1058,25 +1099,122 @@ public class GameController : MonoBehaviour
         return toolsInUse;
     }
 
+    public string[] GetBuffsInUse()
+    {
+        string[] buffsInUse = { buff1, buff2 };
+        return buffsInUse;
+    }
+
     public void DungeonSuccess()
     {
         Debug.Log("Great success in the dungeon");
         UpdateToolsInUse("axe", "axe"); // they should be back on the farm, don't need a sword.
         // and then give rewards
-        techPoints++;
-        AddToInventory("dream_ingot", 1);
-        AddToInventory("wood", 10); // for example...
-        playerGold += 25;
+        techPoints++;   // minimum 1 tech point
+        switch (dayCounter)
+        {
+            case 1:
+            case 2:
+                AddToInventory("bamboo", 10);
+                AddToInventory("wood", 10);
+                AddToInventory("berry_aid", 2);
+                AddToInventory("resist", 1);
+                playerGold += 25;
+                dungeonRewards = "Rewarded:\n10 bamboo, 10 wood, 2 berry aid, 1 resist, 25 gold, 1 Tech Point";
+                break;
+            case 3:
+            case 4:
+                AddToInventory("dream_ingot", 1);
+                AddToInventory("ingot", 1);
+                AddToInventory("bamboo", 20);
+                AddToInventory("wood", 5);
+                AddToInventory("speed_slurp", 2);
+                AddToInventory("berry_aid", 1);
+                playerGold += 30;
+                dungeonRewards = "Rewarded:\n1 Dream Ingot, 1 Ingot, 20 bamboo, 5 wood, 2 speed slurp, 1 berry aid, 30 gold, 1 Tech Point";
+                break;
+            case 5:
+            case 6:
+                techPoints++;
+                AddToInventory("dream_ingot", 1);
+                AddToInventory("blackberry", 10);
+                AddToInventory("corn", 10);
+                AddToInventory("potato", 10);
+                AddToInventory("resist", 2);
+                AddToInventory("berry_aid", 1);
+                playerGold += 35;
+                dungeonRewards = "Rewarded:\n1 Dream Ingot, 10 blackberry, 10 corn, 10 potato, 2 resist, 1 berry aid, 35 gold, 2 Tech Point";
+                break;
+            case 7:
+            case 8:
+            case 9:
+                techPoints++;
+                AddToInventory("dream_ingot", 2);
+                AddToInventory("resist", 1);
+                AddToInventory("berry_aid", 5);
+                AddToInventory("speed_slurp", 1);
+                playerGold += 40;
+                dungeonRewards = "Rewarded:\n2 Dream Ingot, 1 resist, 5 berry aid, 1 speed slurp, 40 gold, 2 Tech Point";
+                break;
+            case 10:
+                Debug.Log("Sweet victory!");
+                //SceneManager.LoadScene(4);
+                winner = true;
+                break;
+        }
+        
         dungeonRewardsAvailable = true;
-        dungeonRewards = "Rewarded:\n1 Dream Ingot, 10 wood, 25 gold, 1 Tech Point";
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 
     public void DungeonFail()
     {
         Debug.Log("Great failure in the dungeon");
         UpdateToolsInUse("axe", "axe");
-        SceneManager.LoadScene(0);
+        switch (dayCounter)
+        {
+            case 1:
+            case 2:
+                AddToInventory("bamboo", 5);
+                AddToInventory("wood", 5);
+                AddToInventory("berry_aid", 1);
+                dungeonRewards = "Failed. Half Rewarded:\n5 bamboo, 5 wood, 1 berry aid";
+                break;
+            case 3:
+            case 4:
+                AddToInventory("bamboo", 10);
+                AddToInventory("wood", 2);
+                AddToInventory("berry_aid", 1);
+                dungeonRewards = "Failed. Half Rewarded:\n10 bamboo, 2 wood, 1 berry aid";
+                break;
+            case 5:
+            case 6:
+                techPoints++;
+                AddToInventory("blackberry", 5);
+                AddToInventory("corn", 5);
+                AddToInventory("potato", 5);
+                AddToInventory("resist", 1);
+                AddToInventory("berry_aid", 1);
+                dungeonRewards = "Failed. Half Rewarded:\n5 blackberry, 5 corn, 5 potato, 1 resist, 1 berry aid, 1 Tech Point";
+                break;
+            case 7:
+            case 8:
+            case 9:
+                techPoints++;
+                AddToInventory("ingot", 1);
+                AddToInventory("resist", 1);
+                AddToInventory("berry_aid", 1);
+                AddToInventory("speed_slurp", 1);
+                dungeonRewards = "Failed. Half Rewarded:\n1 Ingot, 1 resist, 5 berry aid, 1 speed slurp, 1 Tech Point";
+                break;
+            case 10:
+                Debug.Log("Sweet defeat..");
+                loser = true;
+                break;
+        }
+
+        dungeonRewardsAvailable = true;
+        SceneManager.LoadScene(1);
     }
 
     public int GetTechPoints()
@@ -1297,5 +1435,19 @@ public class GameController : MonoBehaviour
             GuiHint("Corn Shooter II is available to craft. See your crafting bench.");
         }
         cornGun2 = b;
+    }
+
+    public string GetLevelType()
+    {
+        return currentScene;
+    }
+
+    public int GetBerryAids()
+    {
+        if (playerInventory.ContainsKey("berry_aid"))
+        {
+            return playerInventory["berry_aid"];
+        }
+        return 0;
     }
 }
