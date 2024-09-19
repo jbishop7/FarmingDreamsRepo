@@ -3,8 +3,6 @@
 ### rbishop7@uwo.ca 
 ### cchen842@uwo.ca
 
-The main branch is farm2-jacob, don't ask...
-
 *Since school has ended, other collaborators have been added to continue building Farming Dreams. Please contact rbishop7@uwo.ca if you have any scholarly concerns*
 
 # How to Play
